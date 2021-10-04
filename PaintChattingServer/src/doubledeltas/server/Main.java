@@ -11,14 +11,22 @@ import java.sql.*;
 public class Main {
     public static short MYSQL_DEFAULT_PORT = 3306;
 
-    public static Connection getConn(String address, short port, String user, String password)
+    /**
+     * MySQL과 연결
+     * @param address DB 주소
+     * @param port DB port
+     * @param dbUser MySQL username
+     * @param dbPassword MySQL password
+     * @return
+     */
+    public static Connection getConn(String address, short port, String dbUser, String dbPassword)
     {
         Connection conn = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL 드라이버 로드
             conn = DriverManager.getConnection(
                     "jdbc:mysql://" + address + ":" + port,
-                    user, password);
+                    dbUser, dbPassword);
         } catch (Exception e) {}
         return conn;
     }

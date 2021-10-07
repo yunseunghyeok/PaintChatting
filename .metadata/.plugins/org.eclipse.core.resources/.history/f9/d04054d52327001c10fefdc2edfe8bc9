@@ -1,0 +1,12 @@
+package doubledeltas.server;
+
+import java.sql.*;
+
+public class Main {
+    public static void main(String[] args)
+    {
+        MySQLConnector con = new MySQLConnector("localhost", "root", "smartist2!");
+        
+        
+    }
+}

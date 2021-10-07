@@ -1,0 +1,5 @@
+package doubledeltas.server;
+
+public class Environment {
+
+}

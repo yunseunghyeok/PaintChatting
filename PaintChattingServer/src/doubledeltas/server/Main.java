@@ -2,29 +2,30 @@ package doubledeltas.server;
 
 import java.io.*;
 import java.net.*;
-import java.sql.*;
 import java.util.Scanner;
 
-import doubledeltas.*;
+import doubledeltas.utils.Environment;
+import doubledeltas.utils.Logger;
 
 public class Main {
-	
+	private static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args)
-    {    	
+    {
     	MysqlConnector	con	= new MysqlConnector("localhost", "root", "smartist2!");
         
-//        if (!con.isConnected()) {
-//        	System.out.print("SQL 연결 실패, 서버를 종료합니다.");
-//        	while (!sc.hasNext()) {}
-//        	return;
-//        }
+        if (!con.isConnected()) {
+        	Logger.l("MysqlConnector 연결 실패, 서버를 종료합니다.");
+        	while (!sc.hasNext()) {}
+        	return;
+        }
         
     	MyThread th = new MyThread();
-    	th.run();
+		th.start();
     }
 
-    private static class MyThread extends Thread {
-    	@Override
+	private static class MyThread extends Thread {
+		@Override
 		public void run() {
 			BufferedReader	in			= null;
 			BufferedWriter	out			= null;
@@ -54,12 +55,13 @@ public class Main {
     					socket.close();
     					listener.close();
     				}
-    				catch (IOException ex) {
-    					System.out.print("클라이언트와 통신 중 오류가 발생해 연결이 중단되었습니다.");
+    				catch (Exception ex) {
+						ex.printStackTrace();
+    					Logger.l("클라이언트와 통신 중 오류가 발생해 연결이 중단되었습니다.");
     				}
     			}
-			}
-		}
-    }
+			} // while-loop END
+		} // run method END
+    } // MyThread END
     
-}
+} // Main class END

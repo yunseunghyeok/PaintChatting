@@ -1,12 +1,10 @@
 package doubledeltas.server;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
-import doubledeltas.constants.Environment;
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+import doubledeltas.utils.Environment;
+import doubledeltas.utils.Logger;
 
 public class MysqlConnector {
 
@@ -27,15 +25,28 @@ public class MysqlConnector {
      * @param dbPassword MySQL password
      * @return
      */
-    public MysqlConnector(String address, short port, String dbUser, String dbPassword)
+    public MysqlConnector(String address, int port, String dbUser, String dbPassword)
     {
         conn = null;
+
+        Logger.l("MysqlConnector 연결 시도...");
+        Logger.l("DBMS Address:\t" + address + ":" + port);
+        Logger.l("DBMS UserInfo:\t" + dbUser + " / " + dbPassword);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL
             conn = DriverManager.getConnection(
                     "jdbc:mysql://" + address + ":" + port,
                     dbUser, dbPassword);
-        } catch (Exception e) {}
+            Logger.l("MysqlConnector 연결 성공!");
+        } catch (ClassNotFoundException e) {
+            Logger.l("MySqlConnector 연결 실패: Connector J 연결 실패");
+        } catch (CommunicationsException e) {
+            Logger.l("MySqlConnector 연결 실패: 주소 연결 실패");
+        } catch (SQLTimeoutException e) {
+            Logger.l("MySqlConnector 연결 실패: DB 로그온 타임아웃");
+        } catch (SQLException e) {
+            Logger.l("MySqlConnector 연결 실패: DB 로그온 실패");
+        }
     }
 
     /**
@@ -43,7 +54,6 @@ public class MysqlConnector {
      * @param address DB address
      * @param dbUser MySQL username
      * @param dbPassword MySQL password
-     * @return
      */
     MysqlConnector(String address, String dbUser, String dbPassword)
     {

@@ -37,7 +37,7 @@ public class Main {
 				try {
     				listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
     				socket = listener.accept();	// 연결 대기, 이후 연결 완료
-    				System.out.print(socket.getInetAddress().toString() + "\tsaid ");
+    				Logger.l(socket.getInetAddress().toString() + "\tsaid ");
     				
     				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     				out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -59,6 +59,7 @@ public class Main {
 						ex.printStackTrace();
     					Logger.l("클라이언트와 통신 중 오류가 발생해 연결이 중단되었습니다.");
     				}
+					return;
     			}
 			} // while-loop END
 		} // run method END

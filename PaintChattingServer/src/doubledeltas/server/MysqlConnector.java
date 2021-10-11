@@ -19,10 +19,10 @@ public class MysqlConnector {
 
     /**
      * MySQL 서버와 연결해 Connection 객체를 가져옴.
-     * @param address DB address
-     * @param port DB port
-     * @param dbUser MySQL username
-     * @param dbPassword MySQL password
+     * @param address DB 주소
+     * @param port DB 포트
+     * @param dbUser MySQL 사용자 이름
+     * @param dbPassword MySQL 패스워드
      * @return
      */
     public MysqlConnector(String address, int port, String dbUser, String dbPassword)
@@ -51,9 +51,9 @@ public class MysqlConnector {
 
     /**
      * MySQL 서버와 연결해 Connection 객체를 가져옴. 연결 port는 MySQL 기본값인 3306.
-     * @param address DB address
-     * @param dbUser MySQL username
-     * @param dbPassword MySQL password
+     * @param address DB 주소
+     * @param dbUser MySQL 사용자 이름
+     * @param dbPassword MySQL 패스워드
      */
     MysqlConnector(String address, String dbUser, String dbPassword)
     {
@@ -63,7 +63,7 @@ public class MysqlConnector {
     /**
      * MySQL 서버에 쿼리를 보내 레코드를 가져오기(select)
      * @param query 보낼 Query문
-     * @return 레코드가 있는 ResultSet
+     * @return 레코드가 있는 <code>ResultSet</code>
      */
     public ResultSet sendQuery(String query) {
     	ResultSet rs = null;

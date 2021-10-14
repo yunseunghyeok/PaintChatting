@@ -1,36 +1,68 @@
 package doubledeltas.server;
 
-/*
-todo:
-- server-db 연결
-- db에서 원하는 정보 가져오도록 query 보내기
- */
+import java.io.*;
+import java.net.*;
+import java.util.Scanner;
 
-import java.sql.*;
+import doubledeltas.utils.Environment;
+import doubledeltas.utils.Logger;
 
 public class Main {
-    public static short MYSQL_DEFAULT_PORT = 3306;
-
-    public static Connection getConn(String address, short port, String user, String password)
-    {
-        Connection conn = null;
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL 드라이버 로드
-            conn = DriverManager.getConnection(
-                    "jdbc:mysql://" + address + ":" + port,
-                    user, password);
-        } catch (Exception e) {}
-        return conn;
-    }
+	private static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args)
     {
-        Connection conn = getConn("localhost", MYSQL_DEFAULT_PORT, "root", "smartist2!");
-        if (conn != null) {
-            System.out.printf("DB 연결 완료");
+    	MysqlConnector	con	= new MysqlConnector("localhost", "root", "smartist2!");
+        
+        if (!con.isConnected()) {
+        	Logger.l("MysqlConnector 연결 실패, 서버를 종료합니다.");
+        	while (!sc.hasNext()) {}
+        	return;
         }
-        else {
-            System.out.printf("DB 연결 에러");
-        }
+        
+    	MyThread th = new MyThread();
+		th.start();
     }
-}
+
+	private static class MyThread extends Thread {
+		@Override
+		public void run() {
+			BufferedReader	in			= null;
+			BufferedWriter	out			= null;
+			ServerSocket	listener	= null;
+			Socket			socket		= null;
+			CommandParser	parser		= new CommandParser();
+			
+			while (true) {
+				try {
+    				listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
+    				socket = listener.accept();	// 연결 대기, 이후 연결 완료
+    				Logger.l(socket.getInetAddress().toString() + "\tsaid ");
+    				
+    				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    				out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    				
+    				String inMsg = in.readLine();
+    				System.out.println(inMsg);
+    				
+    				parser.parse(inMsg);
+    			}
+    			catch (IOException ex) {
+    				System.out.print(ex.getMessage());
+    			}
+    			finally {
+    				try {
+    					socket.close();
+    					listener.close();
+    				}
+    				catch (Exception ex) {
+						ex.printStackTrace();
+    					Logger.l("클라이언트와 통신 중 오류가 발생해 연결이 중단되었습니다.");
+    				}
+					return;
+    			}
+			} // while-loop END
+		} // run method END
+    } // MyThread END
+    
+} // Main class END

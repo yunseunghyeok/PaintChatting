@@ -1,0 +1,6 @@
+package doubledeltas.server;
+
+public class Environment {
+    public static short MYSQL_DEFAULT_PORT = 3306;
+
+}

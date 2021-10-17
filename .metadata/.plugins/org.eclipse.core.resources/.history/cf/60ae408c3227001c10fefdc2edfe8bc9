@@ -1,0 +1,58 @@
+package doubledeltas.server;
+
+import java.io.*;
+import java.net.*;
+import java.sql.*;
+import java.util.Scanner;
+
+public class Main {
+	
+    public static void main(String[] args)
+    {
+    	Scanner			sc	= new Scanner(System.in);
+    	
+    	MySQLConnector	con	= new MySQLConnector("localhost", "root", "smartist2!");
+        
+//        if (!con.isConnected()) {
+//        	System.out.print("SQL 연결 실패, 서버를 종료합니다.");
+//        	while (!sc.hasNext()) {}
+//        	return;
+//        }
+        
+    	Thread th = new Thread() {
+    		@Override
+    		public void run() {
+    			BufferedReader	in			= null;
+    			BufferedWriter	out			= null;
+    			ServerSocket	listener	= null;
+    			Socket			socket		= null;
+    			
+    			while (true) {
+    				try {
+        				listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
+        				// ...
+        				
+        				
+        			}
+        			catch (IOException ex) {
+        				System.out.print(ex.getMessage());
+        			}
+        			finally {
+        				try {
+        					socket.close();
+        					listener.close();
+        				}
+        				catch (IOException ex) {
+        					System.out.print("클라이언트와 통신 중 오류가 발생해 연결이 중단되었습니다.");
+        				}
+        			}
+    			}
+    			
+    		}
+    	};
+    	th.run();
+    	
+    	
+        
+    }
+}

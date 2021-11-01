@@ -11,8 +11,8 @@ import java.net.Socket;
 public class PollerThread extends Thread {
     @Override
     public void run() {
-        InputStream         in			= null;
-        OutputStream        out			= null;
+        InputStream         is			= null;
+        OutputStream        os			= null;
         ServerSocket        listener    = null;
         Socket              socket      = null;
         CommandRouter       router      = new CommandRouter();
@@ -23,8 +23,10 @@ public class PollerThread extends Thread {
                 listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
                 socket = listener.accept();	// 연결 대기, 이후 연결 완료
 
-                in = socket.getInputStream();
-                out = socket.getOutputStream();
+                Logger.l(String.format("클라이언트 [{}]가 접속되었습니다.", socket.getInetAddress().toString()));
+
+                is = socket.getInputStream();
+                os = socket.getOutputStream();
 
 
 

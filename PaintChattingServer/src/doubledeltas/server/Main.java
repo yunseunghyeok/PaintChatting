@@ -19,7 +19,6 @@ public class Main {
         	while (!sc.hasNext()) {}
         	return;
         }
-        
     	MyThread th = new MyThread();
 		th.start();
     }

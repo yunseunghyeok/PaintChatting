@@ -28,7 +28,8 @@ public class PollerThread extends Thread {
                 is = socket.getInputStream();
                 os = socket.getOutputStream();
 
-
+                is.read(buffer);
+                router.route(buffer);
 
             }
             catch (IOException ex) {

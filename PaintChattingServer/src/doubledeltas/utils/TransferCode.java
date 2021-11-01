@@ -1,3 +1,7 @@
+/*  Last Update: 20211101 - 5th meeting
+ *  Authored by DoubleDeltas
+ */
+
 package doubledeltas.utils;
 
 public enum TransferCode {

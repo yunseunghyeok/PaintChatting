@@ -12,7 +12,10 @@ public class Main {
 
     public static void main(String[] args)
     {
-    	MysqlConnector	con	= new MysqlConnector("localhost", "root", "smartist2!");
+    	MysqlConnector	con	=
+				// new MysqlConnector("localhost", "root", "smartist2!");
+				// new MysqlConnector("localhost", "guest", "smartist2!");
+				new MysqlConnector("192.168.0.136", "guest", "paintchat123@");
         
         if (!con.isConnected()) {
         	Logger.l("MysqlConnector 연결 실패, 서버를 종료합니다.");
@@ -27,25 +30,21 @@ public class Main {
 	private static class MyThread extends Thread {
 		@Override
 		public void run() {
-			BufferedReader	in			= null;
-			BufferedWriter	out			= null;
-			ServerSocket	listener	= null;
-			Socket			socket		= null;
-			CommandParser	parser		= new CommandParser();
+			InputStreamReader	in			= null;
+			OutputStreamWriter	out			= null;
+			ServerSocket		listener	= null;
+			Socket				socket		= null;
+			CommandParser		parser		= new CommandParser();
 			
 			while (true) {
 				try {
     				listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
     				socket = listener.accept();	// 연결 대기, 이후 연결 완료
-    				Logger.l(socket.getInetAddress().toString() + "\tsaid ");
     				
-    				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    				out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    				in = new InputStreamReader(socket.getInputStream());
+    				out = new OutputStreamWriter(socket.getOutputStream());
     				
-    				String inMsg = in.readLine();
-    				System.out.println(inMsg);
-    				
-    				parser.parse(inMsg);
+
     			}
     			catch (IOException ex) {
     				System.out.print(ex.getMessage());

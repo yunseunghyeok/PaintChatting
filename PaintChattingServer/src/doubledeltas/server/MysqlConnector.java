@@ -102,10 +102,10 @@ public class MysqlConnector {
      * 로그인 시도, 성공 시 
      * @param id
      * @param pw
-     * @return
+     * @return User 객체, 실패시 null
      */
-    public boolean login(String id, String pw) {
-    	
+    public User login(String id, String pw) {
+    	//todo
     }
     
     

@@ -3,6 +3,7 @@ package hakfe;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Line2D;
 
 public class MyInterface extends JFrame {
 	JPanel ChattingRoom;
@@ -10,15 +11,19 @@ public class MyInterface extends JFrame {
 	JPanel UserList;
 	JPanel ChattingDisplay;
 	JPanel ChattingSend;
-	JTextArea ChattingSendArea;
 	JPanel Canvas;
 	JPanel SelectingColor;
 	JPanel Menu;
-	JScrollPane scroll;
 	
 	JButton menubutton = new JButton("메뉴버튼");
 	JButton addChattingRoomButton = new JButton("방 추가");
+	JButton sendButton;
+	
+	JTextArea ChattingSendArea;
 
+	JScrollPane roomScroll;
+	JScrollPane chattingSendScroll;
+	
 	public int count = 1;
 
 	GridBagLayout grid = new GridBagLayout();
@@ -58,9 +63,9 @@ public class MyInterface extends JFrame {
 		c.add(ChattingRoom);
 		ChattingRoom.setVisible(true);
 
-		scroll = new JScrollPane(ChattingRoom);
-		scroll.setBounds(0, 90, 100, 710);
-		c.add(scroll);
+		roomScroll = new JScrollPane(ChattingRoom);
+		roomScroll.setBounds(0, 90, 100, 710);
+		c.add(roomScroll);
 
 		// ChattingRoom.add(addChattingRoomButton);
 		gbcForm(addChattingRoomButton, 0, 0, 1, 1);
@@ -91,7 +96,7 @@ public class MyInterface extends JFrame {
 		c.add(ChattingDisplay);
 		ChattingDisplay.setBackground(Color.blue);
 		ChattingDisplay.setVisible(true);
-
+		
 		ChattingSend = new JPanel();
 		ChattingSend.setLayout(null);
 		ChattingSend.setSize(sizeX - 950, 200);
@@ -99,21 +104,32 @@ public class MyInterface extends JFrame {
 		c.add(ChattingSend);
 		ChattingSend.setBackground(Color.gray);
 		ChattingSend.setVisible(true);
-
-		ChattingSendArea = new JTextArea(7, 20);
-		ChattingSendArea.setText("채팅을 입력하세요.");
+		
+		ChattingSendArea = new JTextArea(5, 10);
+		ChattingSendArea.setSize(sizeX - 1100, 100);
+		ChattingSendArea.setLocation(310, sizeY - 180);
 		ChattingSendArea.setVisible(true);
-		ChattingSend.add(new JScrollPane(ChattingSendArea));
-		// c.add(ChattingSendArea);
+		ChattingSend.add(ChattingSendArea);
+		c.add(ChattingSendArea);
+		
+		sendButton = new JButton("전송");
+		ChattingSend.add(sendButton);
+		sendButton.setBounds(480, 50, 90, 30);
+		sendButton.setVisible(true);
+		
+		Menu.add(menubutton);
+		menubutton.setBounds(5, 25, 90, 30);
+		menubutton.setVisible(true);
 		
 		Canvas = new JPanel();
 		Canvas.setLayout(null);
 		Canvas.setSize(650, 600);
 		Canvas.setLocation(300 + sizeX - 950, 0);
-		c.add(Canvas);
 		Canvas.setBackground(Color.BLACK);
 		Canvas.setVisible(true);
 
+		Canvas.add(new MyCanvas());
+		
 		SelectingColor = new JPanel();
 		SelectingColor.setLayout(null);
 		SelectingColor.setSize(650, 500);
@@ -123,12 +139,24 @@ public class MyInterface extends JFrame {
 		SelectingColor.setVisible(true);
 
 	}
+	class MyCanvas extends Canvas{
+		
+		public MyCanvas() {
+			setBackground(Color.white);
+		}
 
+		public void paint(Graphics g) {
+			Graphics2D g2;
+			g2 = (Graphics2D) g;
+			g2.setColor(Color.black);
+		    g2.draw(new Line2D.Double(30, 30, 60, 100));
+		}
+	}
 	class AddChattingRoom implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			JButton bt = new JButton(count + "번방");
 			gbcForm(bt, 0, count, 1, 1);
-			scroll.updateUI();
+			roomScroll.updateUI();
 			bt.setVisible(true);
 			count++;
 		}

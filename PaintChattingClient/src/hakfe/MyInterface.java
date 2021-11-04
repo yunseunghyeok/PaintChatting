@@ -4,8 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
+import java.util.*;
 
 public class MyInterface extends JFrame {
+	
+	Container c;
+	
 	JPanel ChattingRoom;
 	JPanel ChattingRoomName;
 	JPanel UserList;
@@ -24,8 +28,18 @@ public class MyInterface extends JFrame {
 	JScrollPane roomScroll;
 	JScrollPane chattingSendScroll;
 	
+	int sizeX;
+	int sizeY;
+	
+	int oldX, oldY;
+	int curX, curY;
+	Vector<point> tmp = new Vector<point>();
+	Vector<Vector> list = new Vector<Vector>();
+	int a[], b[];
 	public int count = 1;
-
+	
+	Color curruntColor = Color.white;
+	
 	GridBagLayout grid = new GridBagLayout();
 	GridBagConstraints gbc = new GridBagConstraints();
 
@@ -34,14 +48,14 @@ public class MyInterface extends JFrame {
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		Container c = frame.getContentPane();
+		c = frame.getContentPane();
 		frame.setVisible(true);
 		c.setLayout(null);
 		gbc.fill = GridBagConstraints.NONE;
 		Dimension res = Toolkit.getDefaultToolkit().getScreenSize(); // 화면 전체 크기 구하기
 
-		int sizeX = res.width;
-		int sizeY = res.height;
+		sizeX = res.width;
+		sizeY = res.height;
 
 		Menu = new JPanel();
 		Menu.setLayout(null);
@@ -80,7 +94,7 @@ public class MyInterface extends JFrame {
 		c.add(ChattingRoomName);
 		ChattingRoomName.setBackground(Color.yellow);
 		ChattingRoomName.setVisible(true);
-
+		
 		UserList = new JPanel();
 		UserList.setLayout(null);
 		UserList.setSize(200, 730);
@@ -105,12 +119,14 @@ public class MyInterface extends JFrame {
 		ChattingSend.setBackground(Color.gray);
 		ChattingSend.setVisible(true);
 		
-		ChattingSendArea = new JTextArea(5, 10);
+		ChattingSendArea = new JTextArea();
+		chattingSendScroll = new JScrollPane(ChattingSendArea);
+		ChattingSendArea.setText("여기에 메시지를 입력하세요.");
 		ChattingSendArea.setSize(sizeX - 1100, 100);
 		ChattingSendArea.setLocation(310, sizeY - 180);
-		ChattingSendArea.setVisible(true);
 		ChattingSend.add(ChattingSendArea);
 		c.add(ChattingSendArea);
+		ChattingSendArea.setVisible(true);
 		
 		sendButton = new JButton("전송");
 		ChattingSend.add(sendButton);
@@ -121,14 +137,7 @@ public class MyInterface extends JFrame {
 		menubutton.setBounds(5, 25, 90, 30);
 		menubutton.setVisible(true);
 		
-		Canvas = new JPanel();
-		Canvas.setLayout(null);
-		Canvas.setSize(650, 600);
-		Canvas.setLocation(300 + sizeX - 950, 0);
-		Canvas.setBackground(Color.BLACK);
-		Canvas.setVisible(true);
-
-		Canvas.add(new MyCanvas());
+		new MyCanvas();
 		
 		SelectingColor = new JPanel();
 		SelectingColor.setLayout(null);
@@ -139,17 +148,42 @@ public class MyInterface extends JFrame {
 		SelectingColor.setVisible(true);
 
 	}
-	class MyCanvas extends Canvas{
-		
+	
+	public void gbcForm(Component c, int x, int y, int w, int h) {
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = w;
+		gbc.gridheight = h;
+		ChattingRoom.add(c, gbc);
+	}
+	class MyCanvas extends JPanel{
 		public MyCanvas() {
-			setBackground(Color.white);
+			Canvas = new JPanel();
+			c.add(Canvas);
+			Canvas.setLayout(null);
+			Canvas.setSize(650, 600);
+			Canvas.setLocation(300 + sizeX - 950, 0);
+			Canvas.setVisible(true);
+			Canvas.setBackground(Color.black);
+			Canvas.addMouseListener(new CanvasMouseListener());
+			Canvas.addMouseMotionListener(new CanvasMouseMotionListener());
 		}
-
-		public void paint(Graphics g) {
-			Graphics2D g2;
-			g2 = (Graphics2D) g;
-			g2.setColor(Color.black);
-		    g2.draw(new Line2D.Double(30, 30, 60, 100));
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.setColor(curruntColor);
+			for (Vector vs : list) {
+				Iterator it = vs.iterator();
+				a = new int[vs.size()];
+				b = new int[vs.size()];
+				int k = 0;
+				while (it.hasNext()) {
+					point pt = (point) it.next();
+					a[k] = pt.x;
+					b[k] = pt.y;
+					k++;
+				}
+				g.drawPolyline(a, b, a.length);
+			}
 		}
 	}
 	class AddChattingRoom implements ActionListener {
@@ -161,12 +195,43 @@ public class MyInterface extends JFrame {
 			count++;
 		}
 	}
-	public void gbcForm(Component c, int x, int y, int w, int h) {
-		gbc.gridx = x;
-		gbc.gridy = y;
-		gbc.gridwidth = w;
-		gbc.gridheight = h;
-		ChattingRoom.add(c, gbc);
+	class CanvasMouseListener extends MouseAdapter{
+		@Override
+		public void mousePressed(MouseEvent e) {
+			super.mousePressed(e);
+			oldX = e.getX();
+			oldY = e.getY();
+			tmp.add(new point(oldX, oldY));
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			super.mouseReleased(e);
+			list.add(tmp);
+			tmp = new Vector<point>();
+			repaint();
+		}
+	}
+	class CanvasMouseMotionListener implements MouseMotionListener{
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			curX = e.getX();
+			curY = e.getY();
+			tmp.add(new point(curX, curY));
+			Canvas.getGraphics().drawLine(oldX, oldY, curX, curY);
+			oldX = curX;
+			oldY = curY;
+			repaint();
+		}
+		@Override
+		public void mouseMoved(MouseEvent e) {}
+	}
+	class point {
+		int x, y;
+		public point(int a, int b) {
+			x = a;
+			y = b;
+		}
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

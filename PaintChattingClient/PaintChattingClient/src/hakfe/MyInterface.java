@@ -1,4 +1,3 @@
-//11.06 수정
 package hakfe;
 
 import javax.swing.*;
@@ -180,7 +179,6 @@ public class MyInterface extends JFrame {
 			Canvas.addMouseListener(new CanvasMouseListener());
 			Canvas.addMouseMotionListener(new CanvasMouseMotionListener());
 		}
-		/* 창 변경 시, 다시 그려지는 동작 구현해야 함...
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			for (Vector vs : list) {
@@ -198,7 +196,6 @@ public class MyInterface extends JFrame {
 				g.drawPolyline(a, b, a.length);
 			}
 		}
-		*/
 	}
 	class CanvasMouseListener extends MouseAdapter{
 		@Override

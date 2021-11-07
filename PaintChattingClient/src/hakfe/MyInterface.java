@@ -3,6 +3,8 @@ package hakfe;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.*;
@@ -40,11 +42,13 @@ public class MyInterface extends JFrame {
 	int a[], b[];
 	public int count = 1;
 	
-	Color currentColor = Color.black;
+	Color currentColor = Color.RED;
 	
 	GridBagLayout grid = new GridBagLayout();
 	GridBagConstraints gbc = new GridBagConstraints();
-
+	
+	Graphics gp;
+	
 	public MyInterface() {
 		JFrame frame = new JFrame("PaintChatting");
 		
@@ -172,33 +176,19 @@ public class MyInterface extends JFrame {
 		public MyCanvas() {
 			Canvas = new JPanel();
 			c.add(Canvas);
-			Canvas.setLayout(null);
+			//Canvas.setLayout(null);
 			Canvas.setSize(650, 600);
 			Canvas.setLocation(300 + sizeX - 950, 0);
 			Canvas.setVisible(true);
 			Canvas.setBackground(Color.WHITE);
 			Canvas.addMouseListener(new CanvasMouseListener());
 			Canvas.addMouseMotionListener(new CanvasMouseMotionListener());
+			gp = Canvas.getGraphics();
 		}
-		/* 창 변경 시, 다시 그려지는 동작 구현해야 함...
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			for (Vector vs : list) {
-				g.setColor(currentColor);
-				Iterator it = vs.iterator();
-				a = new int[vs.size()];
-				b = new int[vs.size()];
-				int k = 0;
-				while (it.hasNext()) {
-					point pt = (point) it.next();
-					a[k] = pt.x;
-					b[k] = pt.y;
-					k++;
-				}
-				g.drawPolyline(a, b, a.length);
-			}
+			g.setColor(Color.RED);
 		}
-		*/
 	}
 	class CanvasMouseListener extends MouseAdapter{
 		@Override
@@ -207,6 +197,7 @@ public class MyInterface extends JFrame {
 			oldX = e.getX();
 			oldY = e.getY();
 			tmp.add(new point(oldX, oldY));
+			gp.setColor(currentColor);
 		}
 		
 		@Override
@@ -214,7 +205,7 @@ public class MyInterface extends JFrame {
 			super.mouseReleased(e);
 			list.add(tmp);
 			tmp = new Vector<point>();
-			//repaint();
+			
 		}
 	}
 	class CanvasMouseMotionListener implements MouseMotionListener{
@@ -223,10 +214,10 @@ public class MyInterface extends JFrame {
 			curX = e.getX();
 			curY = e.getY();
 			tmp.add(new point(curX, curY));
-			Canvas.getGraphics().drawLine(oldX, oldY, curX, curY);
+			gp.setColor(currentColor);
+			gp.drawLine(oldX, oldY, curX, curY);
 			oldX = curX;
 			oldY = curY;
-			//repaint();
 		}
 		@Override
 		public void mouseMoved(MouseEvent e) {}

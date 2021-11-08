@@ -93,5 +93,23 @@ public class MysqlConnector {
     	return affectedRows;
     }
     
-    // todo
+    /**
+     * ID 유뮤 확인
+     * @param id	확인할 ID
+     */
+    public boolean doesIDExist(String id) {
+    	//todo
+    }
+    
+    /**
+     * 로그인 시도, 성공 시 
+     * @param id
+     * @param pw
+     * @return
+     */
+    public boolean login(String id, String pw) {
+    	
+    }
+    
+    
 }

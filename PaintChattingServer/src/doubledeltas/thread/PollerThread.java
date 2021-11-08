@@ -1,6 +1,6 @@
 package doubledeltas.thread;
 
-import doubledeltas.server.CommandRouter;
+import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.Environment;
 import doubledeltas.utils.Logger;
 
@@ -15,8 +15,7 @@ public class PollerThread extends Thread {
         OutputStream        os			= null;
         ServerSocket        listener    = null;
         Socket              socket      = null;
-        CommandRouter       router;
-        byte[]              buffer      = new byte[2048];
+        Thread              th          = null;
 
         while (true) {
             try {
@@ -31,8 +30,21 @@ public class PollerThread extends Thread {
                 is = socket.getInputStream();
                 os = socket.getOutputStream();
 
-                is.read(buffer);
-                router = new CommandRouter(buffer);
+                // 첫 4바이트를 읽어 COMMAND/FILE 여부를 판단.
+                byte[] firstFour = new byte[4];
+                is.read(firstFour);
+                int code = new ByteStringReader(firstFour).readInInteger();
+
+                if (code == 0x00000000) {
+                    // 첫 4바이트(code)가 000...0이면 COMMAND
+                    th = new RouterThread(socket);
+                    th.start();
+                }
+                else {
+                    // 아닐 경우 code를 식별코드로 하는 파일 다운로드
+                    th = new FileDownloadThread(socket, code);
+                    th.start();
+                }
             }
             catch (IOException ex) {
                 System.out.print(ex.getMessage());
@@ -47,7 +59,7 @@ public class PollerThread extends Thread {
                     Logger.l("클라이언트와 통신 중 오류가 발생해 연결이 중단되었습니다.");
                 }
                 return;
-            }
+            } // try-catch-finally END
         } // while-loop END
     } // run method END
 } // MyThread END

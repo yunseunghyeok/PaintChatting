@@ -20,7 +20,7 @@ public class Main {
 			return;
 		}
 
-		PollerThread th = new PollerThread();
-		th.start();
+		PollerThread pth = new PollerThread();
+		pth.start();
 	}
 } // Main class END

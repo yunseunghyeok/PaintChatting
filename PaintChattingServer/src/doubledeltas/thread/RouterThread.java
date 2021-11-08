@@ -1,22 +1,27 @@
-package doubledeltas.server;
+package doubledeltas.thread;
 
 import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.TransferCode;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class CommandRouter implements Runnable {
+public class RouterThread extends Thread {
 	private byte[] bytes;
 	ByteStringReader bsr;
-	Thread th;
+	Socket socket;
 
-	public CommandRouter(byte[] bytes) {
-		this.bytes = bytes;
+	public RouterThread(Socket socket) throws IOException {
+		this.socket = socket;
+
+		bytes = new byte[1024];
+		InputStream is = socket.getInputStream();
+		is.read(bytes);
+
 		bsr = new ByteStringReader(bytes);
-
-		th = new Thread(this);
-		th.start();
 	}
 
 	@Override
@@ -26,9 +31,9 @@ public class CommandRouter implements Runnable {
 		Font font;
 		Image img;
 
-		bsr.setCursor(1);
+		bsr.setCursor(2);	// 앞 2 Byte는 Magic Number(0xC4 0xA7)이었음
 		switch (TransferCode
-				.valueOf(Byte.toString(bytes[0]))) {
+				.valueOf(Byte.toString(bytes[2]))) {
 			case LOGIN:
 				id		= bsr.readInString(45);
 				pw		= bsr.readInString(45);
@@ -54,8 +59,7 @@ public class CommandRouter implements Runnable {
 				msg		= bsr.readInString(1024);
 				font	= new Font(bsr.readInString(45), Font.PLAIN, 10);
 				imgid	= bsr.readInInteger(4);
-				if (imgid == 0) img = null;
-				// else: imgid의 이미지가 전송되기를 기다림
+				if (imgid == 0) img = null; else img = recieveImage(imgid);
 				//chat(roomID, nick, msg, font, img);
 				break;
 			case USER_NICK_CHANGE:
@@ -67,10 +71,28 @@ public class CommandRouter implements Runnable {
 			case USER_PROFILE_CHANGE:
 				id		= bsr.readInString(45);
 				imgid	= bsr.readInInteger(4);
+				if (imgid == 0) img = null; else img = recieveImage(imgid);
 				// askUserProfileChange(id, img);
+				break;
 			default:
 				break;
 		}
 		return;
+	}
+
+	protected Image recieveImage(int imgid) {
+		Image res = null;
+
+		try {
+			wait();
+			// 다운로드가 끝나면 PollerThread가 notify함
+
+
+		}
+		catch (InterruptedException e) {
+			return null;
+		}
+
+		return res;
 	}
 }

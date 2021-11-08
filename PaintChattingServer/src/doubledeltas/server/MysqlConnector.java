@@ -23,7 +23,6 @@ public class MysqlConnector {
      * @param port DB 포트
      * @param dbUser MySQL 사용자 이름
      * @param dbPassword MySQL 패스워드
-     * @return
      */
     public MysqlConnector(String address, int port, String dbUser, String dbPassword)
     {
@@ -40,12 +39,16 @@ public class MysqlConnector {
             Logger.l("MysqlConnector 연결 성공!");
         } catch (ClassNotFoundException e) {
             Logger.l("MySqlConnector 연결 실패: Connector J 연결 실패");
+            e.printStackTrace();
         } catch (CommunicationsException e) {
             Logger.l("MySqlConnector 연결 실패: 주소 연결 실패");
+            e.printStackTrace();
         } catch (SQLTimeoutException e) {
             Logger.l("MySqlConnector 연결 실패: DB 로그온 타임아웃");
+            e.printStackTrace();
         } catch (SQLException e) {
             Logger.l("MySqlConnector 연결 실패: DB 로그온 실패");
+            e.printStackTrace();
         }
     }
 

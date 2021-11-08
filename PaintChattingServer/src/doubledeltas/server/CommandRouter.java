@@ -67,6 +67,7 @@ public class CommandRouter implements Runnable {
 			case USER_PROFILE_CHANGE:
 				id		= bsr.readInString(45);
 				imgid	= bsr.readInInteger(4);
+				//
 			default:
 				break;
 		}

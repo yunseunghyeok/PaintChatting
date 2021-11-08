@@ -12,14 +12,14 @@ public enum TransferCode {
     REGISTER,
     REGISTER_SUC,
     REGISTER_FAIL,
-    CUT_COMMU,
+    CONNECTION_CUT,
 
     ROOM_ENTER,
     ROOM_ENTER_SUC,
     ROOM_ENTER_FAIL,
     ROOM_SOMEONE_JOINED,
     CHAT,
-    CHAT_WITH_IMAGE,
+    // CHAT_WITH_IMAGE, // deprecated
     USER_NICK_CHANGE,
     USER_NICK_CHANGE_SUC,
 

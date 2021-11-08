@@ -15,8 +15,8 @@ public class PollerThread extends Thread {
         OutputStream        os			= null;
         ServerSocket        listener    = null;
         Socket              socket      = null;
-        CommandRouter       router      = new CommandRouter();
-        byte[]              buffer      = new byte[10 * (1 << 20)]; // 10 Mibi bytes
+        CommandRouter       router;
+        byte[]              buffer      = new byte[2048];
 
         while (true) {
             try {
@@ -29,8 +29,7 @@ public class PollerThread extends Thread {
                 os = socket.getOutputStream();
 
                 is.read(buffer);
-                router.route(buffer);
-
+                router = new CommandRouter(buffer);
             }
             catch (IOException ex) {
                 System.out.print(ex.getMessage());

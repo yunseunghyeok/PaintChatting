@@ -13,4 +13,12 @@ public class Environment {
 	 * 서버에서 클라이언트로 전송하는 패킷의 포트
 	 */
     public static int SERVER_TO_CLIENT_PORT = 50344;
+	/**
+	 * 클라이언트에서 서버로 전송하는 패킷의 포트
+	 */
+	public static int CLIENT_TO_SERVER_FILE_PORT = 50345;
+	/**
+	 * 서버에서 클라이언트로 전송하는 패킷의 포트
+	 */
+	public static int SERVER_TO_CLIENT_FILE_PORT = 50346;
 }

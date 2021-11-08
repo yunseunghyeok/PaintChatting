@@ -33,7 +33,7 @@ public class ByteStringReader {
     }
 
     public String readInString(int count) {
-        return new String(read(count), StandardCharsets.UTF_8);
+        return new String(read(count));
     }
 
     public int readInInteger(int count) {

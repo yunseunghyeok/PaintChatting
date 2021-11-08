@@ -21,6 +21,9 @@ public class PollerThread extends Thread {
         while (true) {
             try {
                 listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
+
+                Logger.l(String.format("연결 대기"));
+
                 socket = listener.accept();	// 연결 대기, 이후 연결 완료
 
                 Logger.l(String.format("클라이언트 [{}]가 접속되었습니다.", socket.getInetAddress().toString()));

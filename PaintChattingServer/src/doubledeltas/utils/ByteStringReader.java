@@ -21,7 +21,7 @@ public class ByteStringReader {
 
     public int getCursor() { return cur; }
 
-    public byte[] read( int count) {
+    public byte[] read(int count) {
         int len = Math.min(count, bytes.length - cur);
         if (len < 1) return null;
 

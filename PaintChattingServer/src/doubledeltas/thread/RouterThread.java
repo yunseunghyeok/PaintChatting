@@ -1,9 +1,12 @@
 package doubledeltas.thread;
 
 import doubledeltas.utils.ByteStringReader;
+import doubledeltas.utils.Environment;
 import doubledeltas.utils.TransferCode;
 
+import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -59,7 +62,7 @@ public class RouterThread extends Thread {
 				msg		= bsr.readInString(1024);
 				font	= new Font(bsr.readInString(45), Font.PLAIN, 10);
 				imgid	= bsr.readInInteger(4);
-				if (imgid == 0) img = null; else img = recieveImage(imgid);
+				if (imgid == 0) img = null; else img = waitImage(imgid);
 				//chat(roomID, nick, msg, font, img);
 				break;
 			case USER_NICK_CHANGE:
@@ -71,7 +74,7 @@ public class RouterThread extends Thread {
 			case USER_PROFILE_CHANGE:
 				id		= bsr.readInString(45);
 				imgid	= bsr.readInInteger(4);
-				if (imgid == 0) img = null; else img = recieveImage(imgid);
+				if (imgid == 0) img = null; else img = waitImage(imgid);
 				// askUserProfileChange(id, img);
 				break;
 			default:
@@ -80,19 +83,10 @@ public class RouterThread extends Thread {
 		return;
 	}
 
-	protected Image recieveImage(int imgid) {
-		Image res = null;
-
-		try {
-			wait();
-			// 다운로드가 끝나면 PollerThread가 notify함
-
-
-		}
-		catch (InterruptedException e) {
-			return null;
-		}
-
-		return res;
+	protected Image waitImage(int imgid) {
+		//String path = Environment.FILE_DIR + "\\$" + imgid + ".png";
+		File f = new File(path);
+		while (!f.exists()) {}
+		return new ImageIcon(path).getImage();
 	}
 }

@@ -2,7 +2,7 @@ package doubledeltas.server;
 
 import java.util.Scanner;
 
-import doubledeltas.thread.PollerThread;
+import doubledeltas.threads.PollerThread;
 import doubledeltas.utils.Logger;
 
 public class Main {
@@ -35,7 +35,7 @@ public class Main {
 		}
 >>>>>>> doubledeltas
 
-		PollerThread th = new PollerThread();
-		th.start();
+		PollerThread pth = new PollerThread(con);
+		pth.start();
 	}
 } // Main class END

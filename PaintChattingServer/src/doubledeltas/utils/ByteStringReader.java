@@ -21,7 +21,7 @@ public class ByteStringReader {
 
     public int getCursor() { return cur; }
 
-    public byte[] read( int count) {
+    public byte[] read(int count) {
         int len = Math.min(count, bytes.length - cur);
         if (len < 1) return null;
 
@@ -33,7 +33,7 @@ public class ByteStringReader {
     }
 
     public String readInString(int count) {
-        return new String(read(count), StandardCharsets.UTF_8);
+        return new String(read(count));
     }
 
     public int readInInteger(int count) {

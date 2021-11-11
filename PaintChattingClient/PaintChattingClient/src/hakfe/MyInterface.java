@@ -1,8 +1,10 @@
-//11.06 수정
+//11.11 수정
 package hakfe;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.*;
@@ -20,14 +22,18 @@ public class MyInterface extends JFrame {
 	JPanel SelectingColor;
 	JPanel Menu;
 	
+	JLabel currentColorLabel = new JLabel();
+	
 	JButton menubutton = new JButton("메뉴버튼");
 	JButton addChattingRoomButton = new JButton("방 추가");
 	JButton sendButton;
+	JButton openColorChoiceWindowButton = new JButton("색 선택");
+	JButton baseColorChoice[] = {new JButton(), new JButton(),new JButton(),
+							new JButton(),new JButton(),new JButton(),new JButton()};
 	
 	JTextArea ChattingSendArea;
 
 	JScrollPane roomScroll;
-	JScrollPane chattingSendScroll;
 	
 	int sizeX;
 	int sizeY;
@@ -37,14 +43,20 @@ public class MyInterface extends JFrame {
 	Vector<JButton> addChattingRoomButtonVec = new Vector<JButton>();
 	Vector<point> tmp = new Vector<point>();
 	Vector<Vector<point>> list = new Vector<Vector<point>>();
+	
 	int a[], b[];
 	public int count = 1;
 	
-	Color currentColor = Color.black;
-	
+	Color currentColor = Color.RED;
+	Color baseColor[] = {Color.red, Color.orange, Color.yellow, Color.green,
+						Color.blue, new Color(0,0,128), new Color(139,0,255)};
 	GridBagLayout grid = new GridBagLayout();
 	GridBagConstraints gbc = new GridBagConstraints();
-
+	
+	Graphics gp;
+	
+	 JColorChooser colorChooser;
+	
 	public MyInterface() {
 		JFrame frame = new JFrame("PaintChatting");
 		
@@ -70,6 +82,7 @@ public class MyInterface extends JFrame {
 		Menu.add(menubutton);
 		menubutton.setBounds(5, 25, 90, 30);
 		menubutton.setVisible(true);
+		menubutton.addActionListener(new MenuButtonListener());
 
 		ChattingRoom = new JPanel();
 		ChattingRoom.setLayout(grid);
@@ -121,13 +134,11 @@ public class MyInterface extends JFrame {
 		ChattingSend.setBackground(Color.gray);
 		ChattingSend.setVisible(true);
 		
-		ChattingSendArea = new JTextArea();
-		chattingSendScroll = new JScrollPane(ChattingSendArea);
+		ChattingSendArea = new JTextArea(5, 20);
 		ChattingSendArea.setText("여기에 메시지를 입력하세요.");
 		ChattingSendArea.setSize(sizeX - 1100, 100);
-		ChattingSendArea.setLocation(310, sizeY - 180);
+		ChattingSendArea.setLocation(20, 20);
 		ChattingSend.add(ChattingSendArea);
-		c.add(ChattingSendArea);
 		ChattingSendArea.setVisible(true);
 		
 		sendButton = new JButton("전송");
@@ -140,15 +151,7 @@ public class MyInterface extends JFrame {
 		menubutton.setVisible(true);
 		
 		new MyCanvas();
-		
-		SelectingColor = new JPanel();
-		SelectingColor.setLayout(null);
-		SelectingColor.setSize(650, 500);
-		SelectingColor.setLocation(300 + sizeX - 950, 600);
-		c.add(SelectingColor);
-		SelectingColor.setBackground(Color.pink);
-		SelectingColor.setVisible(true);
-
+		new SelectingColorPanel();
 	}
 	
 	public void gbcForm(Component c, int x, int y, int w, int h) {
@@ -168,34 +171,27 @@ public class MyInterface extends JFrame {
 			count++;
 		}
 	}
+	class MenuButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			MenuChoice mc = new MenuChoice();
+		}
+	}
 	class MyCanvas extends JPanel{
 		public MyCanvas() {
 			Canvas = new JPanel();
 			c.add(Canvas);
-			Canvas.setLayout(null);
+			//Canvas.setLayout(null);
 			Canvas.setSize(650, 600);
 			Canvas.setLocation(300 + sizeX - 950, 0);
 			Canvas.setVisible(true);
 			Canvas.setBackground(Color.WHITE);
 			Canvas.addMouseListener(new CanvasMouseListener());
 			Canvas.addMouseMotionListener(new CanvasMouseMotionListener());
+			gp = Canvas.getGraphics();
 		}
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			for (Vector vs : list) {
-				g.setColor(currentColor);
-				Iterator it = vs.iterator();
-				a = new int[vs.size()];
-				b = new int[vs.size()];
-				int k = 0;
-				while (it.hasNext()) {
-					point pt = (point) it.next();
-					a[k] = pt.x;
-					b[k] = pt.y;
-					k++;
-				}
-				g.drawPolyline(a, b, a.length);
-			}
+			g.setColor(Color.RED);
 		}
 	}
 	class CanvasMouseListener extends MouseAdapter{
@@ -205,6 +201,7 @@ public class MyInterface extends JFrame {
 			oldX = e.getX();
 			oldY = e.getY();
 			tmp.add(new point(oldX, oldY));
+			gp.setColor(currentColor);
 		}
 		
 		@Override
@@ -212,7 +209,7 @@ public class MyInterface extends JFrame {
 			super.mouseReleased(e);
 			list.add(tmp);
 			tmp = new Vector<point>();
-			//repaint();
+			
 		}
 	}
 	class CanvasMouseMotionListener implements MouseMotionListener{
@@ -221,10 +218,10 @@ public class MyInterface extends JFrame {
 			curX = e.getX();
 			curY = e.getY();
 			tmp.add(new point(curX, curY));
-			Canvas.getGraphics().drawLine(oldX, oldY, curX, curY);
+			gp.setColor(currentColor);
+			gp.drawLine(oldX, oldY, curX, curY);
 			oldX = curX;
 			oldY = curY;
-			//repaint();
 		}
 		@Override
 		public void mouseMoved(MouseEvent e) {}
@@ -236,6 +233,80 @@ public class MyInterface extends JFrame {
 			y = b;
 		}
 	}
+	class SelectingColorPanel extends JPanel{
+		public SelectingColorPanel() {
+			SelectingColor = new JPanel();
+			c.add(SelectingColor);
+			SelectingColor.setLayout(null);
+			SelectingColor.setSize(650, 500);
+			SelectingColor.setLocation(300 + sizeX - 950, 600);
+			SelectingColor.setBackground(Color.pink);
+			SelectingColor.setVisible(true);
+			
+			collocateCurrentColorLabel();
+			collocateColorChoiceButton();
+			collocateBaseColorChoiceButton();
+		}
+		public void	collocateCurrentColorLabel () {
+			SelectingColor.add(currentColorLabel);	
+			currentColorLabel.setOpaque(true);
+			currentColorLabel.setBounds(5, 25, 90, 90);
+			currentColorLabel.setVisible(true);
+			currentColorLabel.setBackground(currentColor);
+		} 
+		public void collocateColorChoiceButton() {
+			SelectingColor.add(openColorChoiceWindowButton);
+			openColorChoiceWindowButton.setBounds(100, 85, 90, 30);
+			openColorChoiceWindowButton.setVisible(true);
+			openColorChoiceWindowButton.addActionListener(new ColorChoiceListener());
+		}
+		public void collocateBaseColorChoiceButton() {
+			for(int i = 0; i < 7; i++) {
+				baseColorChoice[i].addActionListener(new baseColorListener());
+				SelectingColor.add(baseColorChoice[i]);
+				baseColorChoice[i].setBounds(200 + 60 * i, 65, 50, 50);
+				baseColorChoice[i].setBackground(baseColor[i]);
+				baseColorChoice[i].setBorderPainted(false);
+				baseColorChoice[i].setVisible(true);
+			}
+		}
+		class ColorChoiceListener implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				if(e.getSource() == openColorChoiceWindowButton) {
+					colorChooser = new JColorChooser();
+					currentColor = colorChooser.showDialog(null, "색 선택", Color.YELLOW);
+					currentColorLabel.setBackground(currentColor);
+				}
+			}
+		}
+		class baseColorListener implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				if(e.getSource() == baseColorChoice[0]) {
+					currentColor = baseColor[0];
+				}
+				else if(e.getSource() == baseColorChoice[1]) {
+					currentColor = baseColor[1];
+				}
+				else if(e.getSource() == baseColorChoice[2]) {
+					currentColor = baseColor[2];
+				}
+				else if(e.getSource() == baseColorChoice[3]) {
+					currentColor = baseColor[3];
+				}
+				else if(e.getSource() == baseColorChoice[4]) {
+					currentColor = baseColor[4];
+				}
+				else if(e.getSource() == baseColorChoice[5]) {
+					currentColor = baseColor[5];
+				}
+				else if(e.getSource() == baseColorChoice[6]) {
+					currentColor = baseColor[6];
+				}
+				currentColorLabel.setBackground(currentColor);
+			}
+		}
+	}
+	 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		new MyInterface();

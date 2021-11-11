@@ -25,5 +25,5 @@ public class Environment {
 	/**
 	 * 서버에서 파일을 저장하는 파일 경로
 	 */
-	public static String FILE_DIR = "C:\\PaintChatting";
+	public static String FILE_DIR = "C:\\PaintChatting\\images";
 }

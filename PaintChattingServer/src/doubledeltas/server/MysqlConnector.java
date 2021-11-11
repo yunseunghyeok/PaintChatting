@@ -67,15 +67,13 @@ public class MysqlConnector {
      * MySQL 서버에 쿼리를 보내 레코드를 가져오기(select)
      * @param query 보낼 Query문
      * @return 레코드가 있는 <code>ResultSet</code>
+     * @throws SQLException SQL문에 오류가 있을 때
      */
-    public ResultSet sendQuery(String query) {
+    public ResultSet sendQuery(String query) throws SQLException {
     	ResultSet rs = null;
-    	try {
-        	Statement stmt = conn.createStatement();
-        	rs = stmt.executeQuery(query);
-    	}
-    	catch (SQLException ex) {}
-    	return rs;
+        Statement stmt = conn.createStatement();
+        rs = stmt.executeQuery(query);
+        return rs;
     }
     
     /**
@@ -88,8 +86,7 @@ public class MysqlConnector {
         try {
             Statement stmt = conn.createStatement();
             affectedRows = stmt.executeUpdate(query);
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return affectedRows;

@@ -12,13 +12,13 @@ import java.net.Socket;
 public class FileDownloadThread extends Thread {
     private String tmpName, fileName;
     private PollerThread poller;
-    private Socket socket;
+    private InputStream is;
     private int code;
     private File tmpFile, file;
 
-    public FileDownloadThread(PollerThread poller, Socket socket, int code) throws IOException {
+    public FileDownloadThread(PollerThread poller, InputStream is, int code) throws IOException {
         this.poller = poller;
-        this.socket = socket;
+        this.is = is;
         this.code = code;
         tmpName     = "$" + code + ".tmp";
         fileName    = code + ".png";
@@ -28,7 +28,6 @@ public class FileDownloadThread extends Thread {
 
     @Override
     public void run() {
-        InputStream is = null;
         FileOutputStream fos = null;
         byte[] buffer = new byte[1024];
         int size = 0;
@@ -37,7 +36,6 @@ public class FileDownloadThread extends Thread {
         try {
             tmpFile.createNewFile();   // 파일이 없을 때 새 파일 만들기
 
-            is = socket.getInputStream();
             fos = new FileOutputStream(tmpFile);
 
             Logger.l(code + " 파일 다운로드 시작.");

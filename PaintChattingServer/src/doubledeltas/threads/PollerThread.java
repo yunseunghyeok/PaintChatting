@@ -11,6 +11,7 @@ import java.net.Socket;
 
 public class PollerThread extends Thread {
     MysqlConnector con;
+
     public PollerThread(MysqlConnector con) {
         this.con = con;
     }
@@ -26,7 +27,7 @@ public class PollerThread extends Thread {
         try {
             listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
 
-            Logger.l(String.format("연결 대기"));
+            Logger.l(String.format("연결 대기..."));
             while(true) {
                 socket = listener.accept();    // 연결 대기, 이후 연결 완료
 
@@ -46,13 +47,15 @@ public class PollerThread extends Thread {
                     th.start();
                 } else {
                     // 아닐 경우 code를 식별코드로 하는 파일 다운로드
-                    th = new FileDownloadThread(this, socket, code);
+                    th = new FileDownloadThread(this, is, code);
                     th.start();
                 }
                 this.wait();
                 // FileDownloadThread or RouterThread에 의해 notify됨
+                os.close();
+                is.close();
                 socket.close();
-                Logger.l(String.format("클라이언트 [{}] 연결 종료, 연결 대기", socket.getInetAddress().toString()));
+                Logger.l(String.format("클라이언트 [{}] 연결 종료, 연결 대기...", socket.getInetAddress().toString()));
             }
         }
         catch (IOException ex) {

@@ -1,6 +1,9 @@
 package doubledeltas.threads;
 
 import doubledeltas.server.MysqlConnector;
+import doubledeltas.threads.workers.CutConnectionWorker;
+import doubledeltas.threads.workers.LoginWorker;
+import doubledeltas.threads.workers.RegistrationWorker;
 import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.Environment;
 import doubledeltas.utils.TransferCode;
@@ -18,16 +21,17 @@ public class RouterThread extends Thread {
 	ByteStringReader bsr;
 	PollerThread poller;
 	Socket socket;
+	InputStream is;
 
 	public RouterThread(PollerThread poller,
 						MysqlConnector con,
 						Socket socket) throws IOException {
 		this.con = con;
 		this.poller = poller;
-		this.socket = socket;
 
 		bytes = new byte[1024];
-		InputStream is = socket.getInputStream();
+		this.socket = socket;
+		this.is = socket.getInputStream();
 		is.read(bytes);
 
 		bsr = new ByteStringReader(bytes);
@@ -39,6 +43,7 @@ public class RouterThread extends Thread {
 		int roomid;
 		Font font;
 		Image img;
+		Thread worker = null;
 
 		bsr.setCursor(2);	// 앞 2 Byte는 Magic Number(0xC4 0xA7)이었음
 		switch (TransferCode
@@ -46,16 +51,16 @@ public class RouterThread extends Thread {
 			case LOGIN:
 				id		= bsr.readInString(45);
 				pw		= bsr.readInString(45);
-				//askLogin(id, pw);
+				worker = new LoginWorker(con, socket, id, pw);
 				break;
 			case REGISTER:
 				id		= bsr.readInString(45);
 				pw		= bsr.readInString(45);
 				nick 	= bsr.readInString(45);
-				//askRegister(id, pw, nick);
+				worker = new RegistrationWorker(con, socket, id, pw, nick);
 				break;
 			case CONNECTION_CUT:
-				//cutConnection();
+				worker = new CutConnectionWorker(socket);
 				break;
 			case ROOM_ENTER:
 				id		= bsr.readInString(45);
@@ -84,6 +89,7 @@ public class RouterThread extends Thread {
 			default:
 				break;
 		}
+		worker.start();
 		poller.notify();
 		return;
 	}

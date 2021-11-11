@@ -21,11 +21,12 @@ public enum TransferCode {
     ROOM_ENTER_FAIL,
     ROOM_SOMEONE_JOINED,
     CHAT,
-    // CHAT_WITH_IMAGE,      // deprecated
+    CHAT_SUC,
+    CHAT_FAIL,
     USER_NICK_CHANGE,
-    USER_NICK_CHANGE_SUC,
 
     // ---- 0x2x ----
+    USER_NICK_CHANGE_SUC,
     USER_NICK_CHANGE_FAIL,
     USER_PROFILE_CHANGE,
     USER_PROFILE_CHANGE_SUC,

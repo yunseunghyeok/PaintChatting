@@ -1,9 +1,7 @@
 package doubledeltas.threads;
 
 import doubledeltas.server.MysqlConnector;
-import doubledeltas.threads.workers.CutConnectionWorker;
-import doubledeltas.threads.workers.LoginWorker;
-import doubledeltas.threads.workers.RegistrationWorker;
+import doubledeltas.threads.workers.*;
 import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.Environment;
 import doubledeltas.utils.TransferCode;
@@ -40,7 +38,7 @@ public class RouterThread extends Thread {
 	@Override
 	public void run() {
 		String id, pw, nick, msg, oldnick;
-		int roomid;
+		int roomid, imgid;
 		Font font;
 		Image img;
 		Thread worker = null;
@@ -65,15 +63,14 @@ public class RouterThread extends Thread {
 			case ROOM_ENTER:
 				id		= bsr.readInString(45);
 				roomid	= bsr.readInInteger(4);
-				//askRoomEnter(id, roomID);
+				worker = new RoomEnterWorker(con, socket, id, roomid);
 				break;
 			case CHAT:
+				id		= bsr.readInString(45);
 				roomid	= bsr.readInInteger(4);
-				nick	= bsr.readInString(45);
 				msg		= bsr.readInString(1024);
-				font	= new Font(bsr.readInString(45), Font.PLAIN, 10);
-				img		= getImage(bsr.readInInteger(4));
-				//chat(roomID, nick, msg, font, img);
+				imgid	= bsr.readInInteger(4);
+				worker = new ChatWorker(con, socket, id, roomid, msg, imgid);
 				break;
 			case USER_NICK_CHANGE:
 				id		= bsr.readInString(45);
@@ -83,7 +80,7 @@ public class RouterThread extends Thread {
 				break;
 			case USER_PROFILE_CHANGE:
 				id		= bsr.readInString(45);
-				img		= getImage(bsr.readInInteger(4));
+				imgid	= bsr.readInInteger(4);
 				// askUserProfileChange(id, img);
 				break;
 			default:
@@ -94,6 +91,7 @@ public class RouterThread extends Thread {
 		return;
 	}
 
+	/*
 	protected Image getImage(int imgid) {
 		String path = Environment.FILE_DIR + "\\" + imgid + ".png";
 		File f = new File(Environment.FILE_DIR, imgid + ".png");
@@ -101,4 +99,5 @@ public class RouterThread extends Thread {
 			return null;	// 먼저 클라이언트로부터 다운로드 받아야함!
 		return new ImageIcon(path).getImage();
 	}
+	 */
 }

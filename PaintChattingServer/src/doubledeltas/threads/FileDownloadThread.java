@@ -1,4 +1,4 @@
-package doubledeltas.thread;
+package doubledeltas.threads;
 
 import doubledeltas.utils.Environment;
 import doubledeltas.utils.Logger;
@@ -8,20 +8,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-import java.nio.file.*;
 
 public class FileDownloadThread extends Thread {
-    private String tmpPath;
+    private String tmpName, fileName;
+    private PollerThread poller;
     private Socket socket;
     private int code;
-    private File file;
+    private File tmpFile, file;
 
-    public FileDownloadThread(Socket socket, int code) throws IOException {
+    public FileDownloadThread(PollerThread poller, Socket socket, int code) throws IOException {
+        this.poller = poller;
         this.socket = socket;
         this.code = code;
-        tmpPath = Environment.FILE_DIR + "\\$" + code + ".tmp";
-        file = new File(tmpPath);
-        file.createNewFile();   // 파일이 없을 때 새 파일 만들기
+        tmpName     = "$" + code + ".tmp";
+        fileName    = code + ".png";
+        tmpFile     = new File(Environment.FILE_DIR, tmpName);
+        file        = new File(Environment.FILE_DIR, fileName);
     }
 
     @Override
@@ -33,8 +35,10 @@ public class FileDownloadThread extends Thread {
         int len;
 
         try {
+            tmpFile.createNewFile();   // 파일이 없을 때 새 파일 만들기
+
             is = socket.getInputStream();
-            fos = new FileOutputStream(file);
+            fos = new FileOutputStream(tmpFile);
 
             Logger.l(code + " 파일 다운로드 시작.");
 
@@ -43,11 +47,15 @@ public class FileDownloadThread extends Thread {
                 size += len;
             }
 
+            tmpFile.renameTo(file);
             Logger.l(code + " 파일 다운로드 종료. 크기: " + size);
         }
         catch (IOException e) {
             e.printStackTrace();
             Logger.l(code + "파일 다운로드 실패.");
+        }
+        finally {
+            poller.notify();
             return;
         }
     }

@@ -1,5 +1,6 @@
-package doubledeltas.thread;
+package doubledeltas.threads;
 
+import doubledeltas.server.MysqlConnector;
 import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.Environment;
 import doubledeltas.utils.TransferCode;
@@ -10,14 +11,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 public class RouterThread extends Thread {
 	private byte[] bytes;
+	MysqlConnector con;
 	ByteStringReader bsr;
+	PollerThread poller;
 	Socket socket;
 
-	public RouterThread(Socket socket) throws IOException {
+	public RouterThread(PollerThread poller,
+						MysqlConnector con,
+						Socket socket) throws IOException {
+		this.con = con;
+		this.poller = poller;
 		this.socket = socket;
 
 		bytes = new byte[1024];
@@ -30,7 +36,7 @@ public class RouterThread extends Thread {
 	@Override
 	public void run() {
 		String id, pw, nick, msg, oldnick;
-		int roomid, imgid;
+		int roomid;
 		Font font;
 		Image img;
 
@@ -61,8 +67,7 @@ public class RouterThread extends Thread {
 				nick	= bsr.readInString(45);
 				msg		= bsr.readInString(1024);
 				font	= new Font(bsr.readInString(45), Font.PLAIN, 10);
-				imgid	= bsr.readInInteger(4);
-				if (imgid == 0) img = null; else img = waitImage(imgid);
+				img		= getImage(bsr.readInInteger(4));
 				//chat(roomID, nick, msg, font, img);
 				break;
 			case USER_NICK_CHANGE:
@@ -73,20 +78,21 @@ public class RouterThread extends Thread {
 				break;
 			case USER_PROFILE_CHANGE:
 				id		= bsr.readInString(45);
-				imgid	= bsr.readInInteger(4);
-				if (imgid == 0) img = null; else img = waitImage(imgid);
+				img		= getImage(bsr.readInInteger(4));
 				// askUserProfileChange(id, img);
 				break;
 			default:
 				break;
 		}
+		poller.notify();
 		return;
 	}
 
-	protected Image waitImage(int imgid) {
-		//String path = Environment.FILE_DIR + "\\$" + imgid + ".png";
-		File f = new File(path);
-		while (!f.exists()) {}
+	protected Image getImage(int imgid) {
+		String path = Environment.FILE_DIR + "\\" + imgid + ".png";
+		File f = new File(Environment.FILE_DIR, imgid + ".png");
+		if (!f.exists())
+			return null;	// 먼저 클라이언트로부터 다운로드 받아야함!
 		return new ImageIcon(path).getImage();
 	}
 }

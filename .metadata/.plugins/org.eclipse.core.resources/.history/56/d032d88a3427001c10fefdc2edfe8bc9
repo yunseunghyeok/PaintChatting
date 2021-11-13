@@ -1,7 +1,0 @@
-package doubledeltas.server;
-
-public class CommandParser {
-	public CommandParser() {
-		
-	}
-}

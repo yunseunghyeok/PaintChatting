@@ -1,4 +1,13 @@
+<<<<<<< HEAD
+INDEX VERSION 1.131+C:\Users\thesm\OneDrive\¹ÙÅÁ È­¸é\UNIV\JavaTeamProj\.metadata\.plugins\org.eclipse.jdt.core
+3114449862.index
+1865797976.index
+=======
 INDEX VERSION 1.131+C:\Users\gurtm\OneDrive\¹ÙÅÁ È­¸é\ÀÚ¹ÙÆÀÇÃ\.metadata\.plugins\org.eclipse.jdt.core
+<<<<<<< HEAD
 811494029.index
+=======
+>>>>>>> b15aa8300b55b41c51a693fbcdec275e0616c8de
+>>>>>>> master
 613116517.index
 3114449862.index

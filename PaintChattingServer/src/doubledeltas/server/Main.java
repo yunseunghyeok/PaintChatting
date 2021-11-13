@@ -2,7 +2,6 @@ package doubledeltas.server;
 
 import java.util.Scanner;
 
-import doubledeltas.threads.PollerThread;
 import doubledeltas.utils.Logger;
 
 public class Main {

@@ -20,7 +20,6 @@ public class PollerThread extends Thread {
     OutputStream        os			= null;
     ServerSocket        listener    = null;
     Socket              socket      = null;
-    Thread              th          = null;
 
     public PollerThread(MysqlConnector con) {
         this.con = con;

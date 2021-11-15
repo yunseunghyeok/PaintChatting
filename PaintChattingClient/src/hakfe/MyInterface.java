@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.*;
+import javax.swing.event.*;
 
 public class MyInterface extends JFrame {
 	
@@ -55,7 +56,9 @@ public class MyInterface extends JFrame {
 	
 	Graphics gp;
 	
-	 JColorChooser colorChooser;
+	JColorChooser colorChooser;
+	JSlider settingPenThickNess;
+	int penThickNess;
 	
 	public MyInterface() {
 		JFrame frame = new JFrame("PaintChatting");
@@ -193,6 +196,9 @@ public class MyInterface extends JFrame {
 			super.paintComponent(g);
 			g.setColor(Color.RED);
 		}
+		public void panelToImage() {
+			
+		}
 	}
 	class CanvasMouseListener extends MouseAdapter{
 		@Override
@@ -218,6 +224,8 @@ public class MyInterface extends JFrame {
 			curX = e.getX();
 			curY = e.getY();
 			tmp.add(new point(curX, curY));
+			Graphics2D g2 = (Graphics2D)gp;
+			g2.setStroke(new BasicStroke(penThickNess,BasicStroke.CAP_ROUND,0));
 			gp.setColor(currentColor);
 			gp.drawLine(oldX, oldY, curX, curY);
 			oldX = curX;
@@ -246,6 +254,7 @@ public class MyInterface extends JFrame {
 			collocateCurrentColorLabel();
 			collocateColorChoiceButton();
 			collocateBaseColorChoiceButton();
+			penThickNess();
 		}
 		public void	collocateCurrentColorLabel () {
 			SelectingColor.add(currentColorLabel);	
@@ -270,12 +279,37 @@ public class MyInterface extends JFrame {
 				baseColorChoice[i].setVisible(true);
 			}
 		}
+		public void penThickNess() {
+			settingPenThickNess = new JSlider(JSlider.HORIZONTAL,0,20,0);
+			SelectingColor.add(settingPenThickNess);
+			settingPenThickNess.setMinorTickSpacing(1);
+			settingPenThickNess.setMajorTickSpacing(5);;
+			settingPenThickNess.setPaintTicks(true);
+			settingPenThickNess.setPaintLabels(true);
+			
+			settingPenThickNess.setBounds(80, 140, 500, 50);;
+			settingPenThickNess.setVisible(true);
+			settingPenThickNess.addChangeListener(new settingPenThickNessListener());
+			
+		}
+		class settingPenThickNessListener implements ChangeListener{
+			public void stateChanged(ChangeEvent e) {
+				penThickNess = settingPenThickNess.getValue();
+			}
+		}
 		class ColorChoiceListener implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if(e.getSource() == openColorChoiceWindowButton) {
 					colorChooser = new JColorChooser();
-					currentColor = colorChooser.showDialog(null, "색 선택", Color.YELLOW);
-					currentColorLabel.setBackground(currentColor);
+					Color selectedColor = colorChooser.showDialog(null, "색 선택", Color.YELLOW);
+					if(selectedColor == null) {
+						currentColorLabel.setBackground(currentColor);
+					}
+					else
+					{
+						currentColorLabel.setBackground(selectedColor);
+						currentColor = selectedColor;
+					}
 				}
 			}
 		}

@@ -206,7 +206,7 @@ public class PollerThread extends Thread {
         try {
             ResultSet rs = con.sendQuery(String.format(
                     "SELECT pw FROM (SELECT id FROM User WHERE id=%s) WHERE pw=%s",
-                    id, pw)
+                    id, pw);
             );
             return rs.next();
         }
@@ -230,8 +230,14 @@ public class PollerThread extends Thread {
         }
         // send "REGISTER_SUC" command to client socket
         Logger.l(String.format("%s 회원가입 성공.", id));
-        // sendUpdateQuery("INSERT INTO User (id, pw, nick, ...) VALUES ({}, {}, {}, ...")
-
+        con.sendUpdateQuery("INSERT INTO " + user + "VALUES("
+        		.append("'" + id + "',")
+        		.append("'" + pw + "',")
+        		.append("'"+ nick + "',")
+        		.append("'" + 0 + "',")
+        		.append("'" + 굴림체 + "'")
+        		.append(");");
+        
         askLogin(id, pw);    // 회원가입된 정보로 로그인
         return;
     }
@@ -241,6 +247,17 @@ public class PollerThread extends Thread {
      */
     private void askCutConnection() {
         // sendUpdateQuery(유저의 온라인 상태를 TRUE로)
+    	try {
+    		if(psmt != null)
+    			psmt.close();
+    		if(con != null)
+    			con.close();
+    		if(rs != null)
+    			rs.close();
+    	}
+    	catch(SQLException e) {
+    		e.printStackTrace();
+    	}
     }
 
     /**
@@ -249,7 +266,10 @@ public class PollerThread extends Thread {
      * @param roomid
      */
     private void askRoomEnter(String id, int roomid) {
-    	String sql = "insert into "
+    	con.sendUpdateQuery("insert into roomid FROM user WHERE ChatID=%d", roomid);
+    	con.sendUpdateQuery("insert into id FROM chatroom WHERE User=%s", id);
+    	con.sendUpdateQuery("insert into id FROM chatroom-user-list WHERE User_ID=%s", id);
+    	
         // user 'id'의 chatting room list에 추가
         // chatting room 'roomid'에 user 'id' 추가
         // 'ROOM_ENTER_SUC' 메시지 보냄
@@ -264,6 +284,14 @@ public class PollerThread extends Thread {
      * @param imgid 이미지 파일 이름(ID)
      */
     private void askChat(String id, int roomid, String msg, int imgid) {
+    	System.currentTimeMillis();
+    	con.sendUpdateQuery("INSERT INTO " + chatroom-chatlogtable_id + "VALUES("
+        		.append("'" + roomid + "',")
+        		.append("'" + id + "',")
+        		.append("'"+ msg + "',")
+        		.append("'" + imgid + "',")
+        		.append("'" + unix timestamp() + "'")
+        		.append(");");
         // 채팅방 chatid에 msg, imgid 기록
         // 이미지 (imgid).png 파일 전송
         // CHAT_SUC roomid, NICK, msg, FONT, imgid 전송
@@ -275,6 +303,8 @@ public class PollerThread extends Thread {
      * @param nick
      */
     private void askUserNickChange(String id, String nick) {
+    	con.sendUpdateQuery("UPDATE" + con.sendQuery("SELECT User_ID FROM user WHERE User_ID=" + id) + " set User_NickName=%s", nick);
+    
     }
 
     /**
@@ -283,5 +313,7 @@ public class PollerThread extends Thread {
      * @param imgid
      */
     private void askUserProfileChange(String id, int imgid) {
+    	con.sendUpdateQuery("UPDATE" + con.sendQuery("SELECT User_ID FROM user WHERE User_ID=" + id) + "set Profile_Picture=%s", imgid);
+    	
     }
 } // MyThread END

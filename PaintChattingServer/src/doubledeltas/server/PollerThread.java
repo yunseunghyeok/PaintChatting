@@ -249,6 +249,7 @@ public class PollerThread extends Thread {
      * @param roomid
      */
     private void askRoomEnter(String id, int roomid) {
+    	String sql = "insert into "
         // user 'id'의 chatting room list에 추가
         // chatting room 'roomid'에 user 'id' 추가
         // 'ROOM_ENTER_SUC' 메시지 보냄

@@ -1,4 +1,4 @@
-//11.08 수정
+//11.11 수정
 package hakfe;
 
 import javax.swing.*;
@@ -82,6 +82,7 @@ public class MyInterface extends JFrame {
 		Menu.add(menubutton);
 		menubutton.setBounds(5, 25, 90, 30);
 		menubutton.setVisible(true);
+		menubutton.addActionListener(new MenuButtonListener());
 
 		ChattingRoom = new JPanel();
 		ChattingRoom.setLayout(grid);
@@ -168,6 +169,11 @@ public class MyInterface extends JFrame {
 			roomScroll.updateUI();
 			bt.setVisible(true);
 			count++;
+		}
+	}
+	class MenuButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			MenuChoice mc = new MenuChoice();
 		}
 	}
 	class MyCanvas extends JPanel{

@@ -2,7 +2,7 @@
  *  Authored by DoubleDeltas
  */
 
-package doubledeltas.utils;
+package doubledeltas.environments;
 
 public enum TransferCode {
     // ---- 0x0x ----

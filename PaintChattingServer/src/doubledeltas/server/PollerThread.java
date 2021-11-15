@@ -181,7 +181,7 @@ public class PollerThread extends Thread {
             return;
         }
         if (!isPWcorrect(id, pw)) {
-            // send "LOGIN_FAIL 2" command to client socket
+            // send "LOGIN_FAIL 2" commacnd to client socket
             Logger.l(String.format("%s 비밀번호 불일치.", id));
             return;
         }

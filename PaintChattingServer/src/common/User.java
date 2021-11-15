@@ -4,7 +4,7 @@ public class User {
 	public String		id;
 	public String		nick;
 	public Image		profilePic;
-	public Font`		font;
+	public Font			font;
 	public User[]		friends;
 	public ChatRoom[]	chatRoom;
 	
@@ -16,4 +16,5 @@ public class User {
 		this.friends = friends;
 		this.chatRoom = chatRoom;
 	}
+	
 }

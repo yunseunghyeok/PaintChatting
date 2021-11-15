@@ -257,13 +257,13 @@ public class PollerThread extends Thread {
 
     /**
      * 유저가 채팅을 전송함
-     * @param id
-     * @param roomid
-     * @param msg
-     * @param imgid
+     * @param id 유저 ID
+     * @param roomid 채팅방 코드
+     * @param msg 메시지
+     * @param imgid 이미지 파일 이름(ID)
      */
     private void askChat(String id, int roomid, String msg, int imgid) {
-        // 채팅방 chatid에 msg, img 기록
+        // 채팅방 chatid에 msg, imgid 기록
         // 이미지 (imgid).png 파일 전송
         // CHAT_SUC roomid, NICK, msg, FONT, imgid 전송
     }

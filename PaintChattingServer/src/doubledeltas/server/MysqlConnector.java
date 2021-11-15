@@ -98,17 +98,67 @@ public class MysqlConnector {
      * @param id	확인할 ID
      */
     public boolean doesIDExist(String id) {
-    	//todo
+    	String driver = "";
+    	String url = "";
+    	String sql = "SELECT ID" + "FROM user_list WHERE User_ID = ";
+    	
+    	conn = null;
+    	PreparedStatement pstmt = null;
+    	ResultSet rs = null;
+    	
+    	try {
+    		Class.forName(driver);
+    		conn = DriverManager.getConnection(url);
+    		pstmt = conn.prepareStatement(sql + "'" + id + "'");
+    		rs = pstmt.executeQuery();
+    		
+    		if(rs.getString("User_ID") == id) {
+    			return false;
+    		}
+    		else {
+    			return true;
+    		}
+    	}
+    	catech(Exception e) {
+    		System.out.println(e.getMessage());
+    	}
     }
     
     /**
      * 로그인 시도, 성공 시 
      * @param id
      * @param pw
-     * @return
+     * @return User 객체, 실패시 null
      */
-    public boolean login(String id, String pw) {
+    public User login(String id, String pw) {
+    	String Nick, Font, ProfilePicture;
+    	int ChatID, num = 0;
     	
+    	String driver = "";
+    	String url = "";
+    	String sql = "SELECT ID" + "FROM user_list WHERE User_ID = ";
+    	
+    	conn = null;
+    	PreparedStatement pstmt = null;
+    	ResultSet rs = null;
+    	
+    	try {
+    		Class.forName(driver);
+    		conn = DriverManager.getConnection(url);
+    		pstmt = conn.prepareStatement(sql + "'" + id + "'");
+    		rs = pstmt.executeQuery();
+    		
+    		while(rs.next()) {
+    			Nick = rs.getString("User_NickName");
+    			Font = rs.getString("Font");
+    			ProfilePicture = rs.getString("Profile_Picture");
+    			ChatID = rs.getInt("ChatID");
+    			//정보 보내기
+    		}
+    	}
+    	catech(Exception e) {
+    		System.out.println(e.getMessage());
+    	}
     }
     
     

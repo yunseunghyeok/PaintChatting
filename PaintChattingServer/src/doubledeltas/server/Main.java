@@ -7,20 +7,6 @@ import doubledeltas.utils.Logger;
 public class Main {
 	private static Scanner sc = new Scanner(System.in);
 
-<<<<<<< HEAD
-    public static void main(String[] args)
-    {
-    	MysqlConnector	con	= new MysqlConnector("localhost", "root", "smartist2!");
-        
-        if (!con.isConnected()) {
-        	Logger.l("MysqlConnector 연결 실패, 서버를 종료합니다.");
-        	while (!sc.hasNext()) {}
-        	return;
-        }
-    	MyThread th = new MyThread();
-		th.start();
-    }
-=======
     public static void main(String[] args) {
 		MysqlConnector con =
 				// new MysqlConnector("localhost", "root", "smartist2!");
@@ -32,7 +18,6 @@ public class Main {
 			while (!sc.hasNext()) {	}
 			return;
 		}
->>>>>>> doubledeltas
 
 		PollerThread pth = new PollerThread(con);
 		pth.start();

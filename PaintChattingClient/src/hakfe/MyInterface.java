@@ -1,4 +1,4 @@
-//11.11 수정
+//11.18 수정
 package hakfe;
 
 import javax.swing.*;
@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.*;
-import java.awt.geom.Line2D;
 import java.util.*;
 import javax.swing.event.*;
 
@@ -31,6 +30,7 @@ public class MyInterface extends JFrame {
 	JButton openColorChoiceWindowButton = new JButton("색 선택");
 	JButton baseColorChoice[] = {new JButton(), new JButton(),new JButton(),
 							new JButton(),new JButton(),new JButton(),new JButton()};
+	JButton clearCanvasButton;
 	
 	JTextArea ChattingSendArea;
 
@@ -58,7 +58,7 @@ public class MyInterface extends JFrame {
 	
 	JColorChooser colorChooser;
 	JSlider settingPenThickNess;
-	int penThickNess;
+	int penThickNess = 0;
 	
 	public MyInterface() {
 		JFrame frame = new JFrame("PaintChatting");
@@ -69,10 +69,11 @@ public class MyInterface extends JFrame {
 		frame.setVisible(true);
 		c.setLayout(null);
 		gbc.fill = GridBagConstraints.NONE;
-		Dimension res = Toolkit.getDefaultToolkit().getScreenSize(); // 화면 전체 크기 구하기
-
-		sizeX = res.width;
-		sizeY = res.height;
+		
+		sizeX = 1550; // 노트북 크기로 고정
+		sizeY = 839;
+		
+		frame.setSize(sizeX, sizeY);
 		
 		Menu = new JPanel();
 		Menu.setLayout(null);
@@ -99,10 +100,8 @@ public class MyInterface extends JFrame {
 		roomScroll.setBounds(0, 90, 100, 710);
 		c.add(roomScroll);
 
-		// ChattingRoom.add(addChattingRoomButton);
 		gbcForm(addChattingRoomButton, 0, 0, 1, 1);
 		addChattingRoomButton.addActionListener(new AddChattingRoom());
-		// addChattingRoomButton.setSize(90, 30);
 		addChattingRoomButton.setVisible(true);
 
 		ChattingRoomName = new JPanel();
@@ -148,13 +147,17 @@ public class MyInterface extends JFrame {
 		ChattingSend.add(sendButton);
 		sendButton.setBounds(480, 50, 90, 30);
 		sendButton.setVisible(true);
+		sendButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ChattingSendArea.setText("");
+			}
+		});
+		new MyCanvas();
+		new SelectingColorPanel();
 		
 		Menu.add(menubutton);
 		menubutton.setBounds(5, 25, 90, 30);
 		menubutton.setVisible(true);
-		
-		new MyCanvas();
-		new SelectingColorPanel();
 	}
 	
 	public void gbcForm(Component c, int x, int y, int w, int h) {
@@ -176,14 +179,13 @@ public class MyInterface extends JFrame {
 	}
 	class MenuButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
-			MenuChoice mc = new MenuChoice();
+			new MenuChoice();
 		}
 	}
 	class MyCanvas extends JPanel{
 		public MyCanvas() {
 			Canvas = new JPanel();
 			c.add(Canvas);
-			//Canvas.setLayout(null);
 			Canvas.setSize(650, 600);
 			Canvas.setLocation(300 + sizeX - 950, 0);
 			Canvas.setVisible(true);
@@ -191,9 +193,14 @@ public class MyInterface extends JFrame {
 			Canvas.addMouseListener(new CanvasMouseListener());
 			Canvas.addMouseMotionListener(new CanvasMouseMotionListener());
 			gp = Canvas.getGraphics();
+			
 		}
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
+			g.setColor(Color.RED);
+		}
+		public void paint(Graphics g) {
+			super.paint(g);
 			g.setColor(Color.RED);
 		}
 		public void panelToImage() {
@@ -209,7 +216,6 @@ public class MyInterface extends JFrame {
 			tmp.add(new point(oldX, oldY));
 			gp.setColor(currentColor);
 		}
-		
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			super.mouseReleased(e);
@@ -255,6 +261,19 @@ public class MyInterface extends JFrame {
 			collocateColorChoiceButton();
 			collocateBaseColorChoiceButton();
 			penThickNess();
+			
+			clearCanvasButton = new JButton("캔버스 초기화");
+			SelectingColor.add(clearCanvasButton);	
+			clearCanvasButton.setBounds(500, 20, 120, 30);
+			clearCanvasButton.setVisible(true);
+			
+			clearCanvasButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Canvas.update(gp);
+					tmp.clear();
+					list.clear();
+				}
+			});
 		}
 		public void	collocateCurrentColorLabel () {
 			SelectingColor.add(currentColorLabel);	
@@ -342,7 +361,6 @@ public class MyInterface extends JFrame {
 	}
 	 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		new MyInterface();
 	}
 

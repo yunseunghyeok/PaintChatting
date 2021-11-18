@@ -2,8 +2,12 @@ package hakfe;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.*;
+import java.awt.geom.Line2D;
+import java.util.*;
+import javax.swing.event.*;
 
 public class LoginFrame extends JFrame {
 	JFrame loginFrame;
@@ -12,13 +16,11 @@ public class LoginFrame extends JFrame {
 	JButton submit, cancle, signUp;
 	public LoginFrame() {
 		
-		Dimension dim = new Dimension();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		loginFrame = new JFrame("로그인");
 		loginFrame.setLocation(250, 100);
 		loginFrame.setSize(350, 300);
-		loginFrame.setPreferredSize(dim);
 		loginFrame.setVisible(true);
 		loginFrame.setLayout(null);
 
@@ -26,7 +28,6 @@ public class LoginFrame extends JFrame {
 		new addTextField();
 		new addButton();
 	}
-
 	class addLabel {
 		private addLabel() {
 			idLabel = new JLabel("아이디 : ");
@@ -60,6 +61,10 @@ public class LoginFrame extends JFrame {
 			submit = new JButton("확인");
 			cancle = new JButton("취소");
 			signUp = new JButton("회원가입");
+
+			submit.addActionListener(new loginSubmitButtonListener());
+			cancle.addActionListener(new loginCanleButtonListener());
+			signUp.addActionListener(new loginSignUpButtonListener());
 			
 			loginFrame.add(submit);
 			submit.setBounds(80, 180, 70, 30);
@@ -70,9 +75,6 @@ public class LoginFrame extends JFrame {
 			loginFrame.add(signUp);
 			signUp.setBounds(240, 20, 90, 30);
 			
-			submit.addActionListener(new loginSubmitButtonListener());
-			cancle.addActionListener(new loginCanleButtonListener());
-			signUp.addActionListener(new loginSignUpButtonListener());
 		}
 	}
 	class loginSubmitButtonListener implements ActionListener { // 확인버튼 액션 리스너 클래스
@@ -84,7 +86,7 @@ public class LoginFrame extends JFrame {
 			 * 사용자에게 존재하지 않는 입력값이라고 표시해주기 위함임.
 			 * 아이디와 비밀번호 구분 하지 않음. 
 			 */
-			MyInterface in = new MyInterface();
+			new MyInterface();
 			loginFrame.dispose();
 		}
 	}
@@ -97,12 +99,10 @@ public class LoginFrame extends JFrame {
 	class loginSignUpButtonListener implements ActionListener { 
 		// 회원가입 버튼 액션 리스너 클래스
 		public void actionPerformed(ActionEvent e) {
-			SignUpFrame a = new SignUpFrame();
+			new SignUpFrame();
 		}
 	}
 	public static void main(String[] args) {
 		new LoginFrame();
-
 	}
-
 }

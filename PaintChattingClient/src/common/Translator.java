@@ -1,4 +1,4 @@
-package doubledeltas.environments;
+package common;
 
 public class Translator {
 	public static byte[] sendLogin(String id, String pw) {

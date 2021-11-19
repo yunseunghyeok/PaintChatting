@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <dirs>
-    <entry loc="C:\Users\gurtm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_15.0.2.v20210201-0955\jre" stamp="1618578763529"/>
-    <entry loc="C:\Users\gurtm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_15.0.2.v20210201-0955" stamp="1618578763547"/>
-    <entry loc="C:\Users\thesm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149\jre" stamp="1633490353114"/>
-    <entry loc="C:\Users\thesm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149" stamp="1633490353121"/>
+<entry loc="C:\Users\gurtm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_15.0.2.v20210201-0955\jre" stamp="1618578763529"/>
+<entry loc="C:\Users\gurtm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_15.0.2.v20210201-0955" stamp="1618578763547"/>
+<entry loc="C:\Users\thesm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149\jre" stamp="1633490353114"/>
+<entry loc="C:\Users\thesm\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_16.0.2.v20210721-1149" stamp="1633490353121"/>
+<entry loc="C:\Program Files\Java\jre1.8.0_281" stamp="1614083584808"/>
 </dirs>

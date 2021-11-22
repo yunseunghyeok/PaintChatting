@@ -38,7 +38,7 @@ public class ChangeProfile {
 	}
 	class CurrentProfile {
 		public CurrentProfile() {
-			proFileImage = new ImageIcon("img/test.png");
+			proFileImage = new ImageIcon("img/프로필 기본 사진.png");
 			proFileImageLabel = new JLabel(proFileImage);
 			proFileImageLabel.setBounds(90, 50, 200, 200);
 			changeProfileFrame.add(proFileImageLabel);

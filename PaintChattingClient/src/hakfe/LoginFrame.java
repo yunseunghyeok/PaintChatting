@@ -86,7 +86,7 @@ public class LoginFrame extends JFrame {
 			 * 사용자에게 존재하지 않는 입력값이라고 표시해주기 위함임.
 			 * 아이디와 비밀번호 구분 하지 않음. 
 			 */
-			new MyInterface();
+			MyInterface ddd = new MyInterface();
 			loginFrame.dispose();
 		}
 	}

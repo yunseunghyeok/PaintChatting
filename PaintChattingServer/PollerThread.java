@@ -1,10 +1,8 @@
 package doubledeltas.server;
 
 import doubledeltas.server.MysqlConnector;
-import doubledeltas.utils.ByteStringReader;
-import doubledeltas.utils.Environment;
-import doubledeltas.utils.Logger;
-import doubledeltas.utils.TransferCode;
+import doubledeltas.environments.*;
+import doubledeltas.utils.*;
 
 import java.awt.*;
 import java.io.*;
@@ -30,31 +28,31 @@ public class PollerThread extends Thread {
         try {
             listener = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
 
-            Logger.l(String.format("ì—°ê²° ëŒ€ê¸°..."));
+            Logger.l(String.format("¿¬°á ´ë±â..."));
             while(true) {
-                socket = listener.accept();    // ì—°ê²° ëŒ€ê¸°, ì´í›„ ì—°ê²° ì™„ë£Œ
+                socket = listener.accept();    // ¿¬°á ´ë±â, ÀÌÈÄ ¿¬°á ¿Ï·á
 
-                Logger.l(String.format("í´ë¼ì´ì–¸íŠ¸ [%s]ê°€ ì ‘ì†ë˜ì—ˆìŠµë‹ˆë‹¤.", socket.getInetAddress().toString()));
+                Logger.l(String.format("Å¬¶óÀÌ¾ğÆ® [%s]°¡ Á¢¼ÓµÇ¾ú½À´Ï´Ù.", socket.getInetAddress().toString()));
 
                 is = socket.getInputStream();
                 os = socket.getOutputStream();
 
-                // ì²« 4ë°”ì´íŠ¸ë¥¼ ì½ì–´ COMMAND/FILE ì—¬ë¶€ë¥¼ íŒë‹¨.
+                // Ã¹ 4¹ÙÀÌÆ®¸¦ ÀĞ¾î COMMAND/FILE ¿©ºÎ¸¦ ÆÇ´Ü.
                 byte[] firstFour = new byte[4];
                 is.read(firstFour);
                 int code = new ByteStringReader(firstFour).readInInteger();
 
                 if (code == 0x00000000) {
-                    // ì²« 4ë°”ì´íŠ¸(code)ê°€ 000...0ì´ë©´ COMMAND
+                    // Ã¹ 4¹ÙÀÌÆ®(code)°¡ 000...0ÀÌ¸é COMMAND
                     route();
                 } else {
-                    // ì•„ë‹ˆë©´ íŒŒì¼ ë‹¤ìš´ë¡œë“œ
+                    // ¾Æ´Ï¸é ÆÄÀÏ ´Ù¿î·Îµå
                     downloadFile(code);
                 }
                 os.close();
                 is.close();
                 socket.close();
-                Logger.l(String.format("í´ë¼ì´ì–¸íŠ¸ [%s] ì—°ê²° ì¢…ë£Œ, ì—°ê²° ëŒ€ê¸°...", socket.getInetAddress().toString()));
+                Logger.l(String.format("Å¬¶óÀÌ¾ğÆ® [%s] ¿¬°á Á¾·á, ¿¬°á ´ë±â...", socket.getInetAddress().toString()));
             }
         }
         catch (IOException ex) {
@@ -67,7 +65,7 @@ public class PollerThread extends Thread {
             }
             catch (Exception ex) {
                 ex.printStackTrace();
-                Logger.l("í´ë¼ì´ì–¸íŠ¸ì™€ í†µì‹  ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•´ ì—°ê²°ì´ ì¤‘ë‹¨ë˜ì—ˆìŠµë‹ˆë‹¤.");
+                Logger.l("Å¬¶óÀÌ¾ğÆ®¿Í Åë½Å Áß ¿À·ù°¡ ¹ß»ıÇØ ¿¬°áÀÌ Áß´ÜµÇ¾ú½À´Ï´Ù.");
             }
             return;
         } // try-catch-finally END
@@ -81,7 +79,7 @@ public class PollerThread extends Thread {
         }
         catch (Exception e) {}
 
-        bsr.setCursor(2);	// ì• 2 ByteëŠ” Magic Number(0xC4 0xA7)ì´ì—ˆìŒ
+        bsr.setCursor(2);	// ¾Õ 2 Byte´Â Magic Number(0xC4 0xA7)ÀÌ¾úÀ½
         switch (TransferCode
                 .valueOf(Byte.toString(bytes[2]))) {
             case LOGIN: {
@@ -133,7 +131,7 @@ public class PollerThread extends Thread {
     }
 
     /**
-     * ìœ ì €ê°€ ì—…ë¡œë“œí•œ íŒŒì¼ì„ ë‹¤ìš´ë¡œë“œ
+     * À¯Àú°¡ ¾÷·ÎµåÇÑ ÆÄÀÏÀ» ´Ù¿î·Îµå
      * @param code
      */
     private void downloadFile(int code) {
@@ -148,11 +146,11 @@ public class PollerThread extends Thread {
         int len;
 
         try {
-            tmpFile.createNewFile();   // íŒŒì¼ì´ ì—†ì„ ë•Œ ìƒˆ íŒŒì¼ ë§Œë“¤ê¸°
+            tmpFile.createNewFile();   // ÆÄÀÏÀÌ ¾øÀ» ¶§ »õ ÆÄÀÏ ¸¸µé±â
 
             fos = new FileOutputStream(tmpFile);
 
-            Logger.l(code + " íŒŒì¼ ë‹¤ìš´ë¡œë“œ ì‹œì‘.");
+            Logger.l(code + " ÆÄÀÏ ´Ù¿î·Îµå ½ÃÀÛ.");
 
             while ((len = is.read(buffer)) > 0) {
                 fos.write(buffer);
@@ -160,33 +158,33 @@ public class PollerThread extends Thread {
             }
 
             tmpFile.renameTo(file);
-            Logger.l(code + " íŒŒì¼ ë‹¤ìš´ë¡œë“œ ì¢…ë£Œ. í¬ê¸°: " + size);
+            Logger.l(code + " ÆÄÀÏ ´Ù¿î·Îµå Á¾·á. Å©±â: " + size);
         }
         catch (IOException e) {
             e.printStackTrace();
-            Logger.l(code + " íŒŒì¼ ë‹¤ìš´ë¡œë“œ ì‹¤íŒ¨.");
+            Logger.l(code + " ÆÄÀÏ ´Ù¿î·Îµå ½ÇÆĞ.");
         }
     }
 
     /**
-     * ìœ ì €ê°€ ë¡œê·¸ì¸ì„ ì‹œë„
+     * À¯Àú°¡ ·Î±×ÀÎÀ» ½Ãµµ
      * @param id
      * @param pw
      */
     private void askLogin(String id, String pw) {
         if (!doesIDexists(id)) {
             // send "LOGIN_FAIL 1" command to client socket
-            Logger.l(String.format("%s ë¡œê·¸ì¸ ì‹¤íŒ¨.", id));
+            Logger.l(String.format("%s ·Î±×ÀÎ ½ÇÆĞ.", id));
             return;
         }
         if (!isPWcorrect(id, pw)) {
             // send "LOGIN_FAIL 2" commacnd to client socket
-            Logger.l(String.format("%s ë¹„ë°€ë²ˆí˜¸ ë¶ˆì¼ì¹˜.", id));
+            Logger.l(String.format("%s ºñ¹Ğ¹øÈ£ ºÒÀÏÄ¡.", id));
             return;
         }
         // send "LOGIN_SUC" command to client socket
-        Logger.l(String.format("%s ë¡œê·¸ì¸ ì„±ê³µ.", id));
-        // sendUpdateQuery(ìœ ì €ì˜ ì˜¨ë¼ì¸ ìƒíƒœë¥¼ TRUEë¡œ)
+        Logger.l(String.format("%s ·Î±×ÀÎ ¼º°ø.", id));
+        // sendUpdateQuery(À¯ÀúÀÇ ¿Â¶óÀÎ »óÅÂ¸¦ TRUE·Î)
         return;
     }
 
@@ -216,7 +214,7 @@ public class PollerThread extends Thread {
     }
 
     /**
-     * ìœ ì €ê°€ íšŒì›ê°€ì…ì„ ì‹œë„
+     * À¯Àú°¡ È¸¿ø°¡ÀÔÀ» ½Ãµµ
      * @param id
      * @param pw
      * @param nick
@@ -224,28 +222,28 @@ public class PollerThread extends Thread {
     private void askRegistration(String id, String pw, String nick) {
         if (doesIDexists(id)) {
             // send "REGISTER_FAIL 1" command to client socket
-            Logger.l(String.format("%s íšŒì›ê°€ì… ì‹¤íŒ¨. ID ì¤‘ë³µ.", id));
+            Logger.l(String.format("%s È¸¿ø°¡ÀÔ ½ÇÆĞ. ID Áßº¹.", id));
             return;
         }
         // send "REGISTER_SUC" command to client socket
-        Logger.l(String.format("%s íšŒì›ê°€ì… ì„±ê³µ.", id));
+        Logger.l(String.format("%s È¸¿ø°¡ÀÔ ¼º°ø.", id));
         con.sendUpdateQuery("INSERT INTO " + user + "VALUES("
         		.append("'" + id + "',")
         		.append("'" + pw + "',")
         		.append("'"+ nick + "',")
         		.append("'" + 0 + "',")
-        		.append("'" + êµ´ë¦¼ì²´ + "'")
+        		.append("'" + ±¼¸²Ã¼ + "'")
         		.append(");");
         
-        askLogin(id, pw);    // íšŒì›ê°€ì…ëœ ì •ë³´ë¡œ ë¡œê·¸ì¸
+        askLogin(id, pw);    // È¸¿ø°¡ÀÔµÈ Á¤º¸·Î ·Î±×ÀÎ
         return;
     }
 
     /**
-     * ìœ ì €ê°€ ì—°ê²°ì„ ì¢…ë£Œí•¨. í”„ë¡œê·¸ë¨ì´ ì¢…ë£Œë˜ì—ˆì„ ë•Œì˜ ì²˜ë¦¬
+     * À¯Àú°¡ ¿¬°áÀ» Á¾·áÇÔ. ÇÁ·Î±×·¥ÀÌ Á¾·áµÇ¾úÀ» ¶§ÀÇ Ã³¸®
      */
     private void askCutConnection() {
-        // sendUpdateQuery(ìœ ì €ì˜ ì˜¨ë¼ì¸ ìƒíƒœë¥¼ TRUEë¡œ)
+        // sendUpdateQuery(À¯ÀúÀÇ ¿Â¶óÀÎ »óÅÂ¸¦ TRUE·Î)
     	try {
     		if(psmt != null)
     			psmt.close();
@@ -260,7 +258,7 @@ public class PollerThread extends Thread {
     }
 
     /**
-     * ìœ ì €ê°€ ì±„íŒ…ë°©ì— ì…ì¥í•˜ë ¤ í•¨
+     * À¯Àú°¡ Ã¤ÆÃ¹æ¿¡ ÀÔÀåÇÏ·Á ÇÔ
      * @param id
      * @param roomid
      */
@@ -269,35 +267,35 @@ public class PollerThread extends Thread {
     	con.sendUpdateQuery("insert into id FROM chatroom WHERE User=%s", id);
     	con.sendUpdateQuery("insert into id FROM chatroom-user-list WHERE User_ID=%s", id);
     	
-        // user 'id'ì˜ chatting room listì— ì¶”ê°€
-        // chatting room 'roomid'ì— user 'id' ì¶”ê°€
-        // 'ROOM_ENTER_SUC' ë©”ì‹œì§€ ë³´ëƒ„
+        // user 'id'ÀÇ chatting room list¿¡ Ãß°¡
+        // chatting room 'roomid'¿¡ user 'id' Ãß°¡
+        // 'ROOM_ENTER_SUC' ¸Ş½ÃÁö º¸³¿
         return;
     }
 
     /**
-     * ìœ ì €ê°€ ì±„íŒ…ì„ ì „ì†¡í•¨
-     * @param id ìœ ì € ID
-     * @param roomid ì±„íŒ…ë°© ì½”ë“œ
-     * @param msg ë©”ì‹œì§€
-     * @param imgid ì´ë¯¸ì§€ íŒŒì¼ ì´ë¦„(ID)
+     * À¯Àú°¡ Ã¤ÆÃÀ» Àü¼ÛÇÔ
+     * @param id À¯Àú ID
+     * @param roomid Ã¤ÆÃ¹æ ÄÚµå
+     * @param msg ¸Ş½ÃÁö
+     * @param imgid ÀÌ¹ÌÁö ÆÄÀÏ ÀÌ¸§(ID)
      */
     private void askChat(String id, int roomid, String msg, int imgid) {
-    	System.currentTimeMillis();
+    	long timestamp = System.currentTimeMillis();
     	con.sendUpdateQuery("INSERT INTO " + chatroom-chatlogtable_id + "VALUES("
         		.append("'" + roomid + "',")
         		.append("'" + id + "',")
         		.append("'"+ msg + "',")
         		.append("'" + imgid + "',")
-        		.append("'" + unix timestamp() + "'")
+        		.append("'" + timestamp + "'")
         		.append(");");
-        // ì±„íŒ…ë°© chatidì— msg, imgid ê¸°ë¡
-        // ì´ë¯¸ì§€ (imgid).png íŒŒì¼ ì „ì†¡
-        // CHAT_SUC roomid, NICK, msg, FONT, imgid ì „ì†¡
+        // Ã¤ÆÃ¹æ chatid¿¡ msg, imgid ±â·Ï
+        // ÀÌ¹ÌÁö (imgid).png ÆÄÀÏ Àü¼Û
+        // CHAT_SUC roomid, NICK, msg, FONT, imgid Àü¼Û
     }
 
     /**
-     * ìœ ì €ê°€ ë‹‰ë„¤ì„ì„ ë³€ê²½í•˜ë ¤ ì‹œë„í•¨
+     * À¯Àú°¡ ´Ğ³×ÀÓÀ» º¯°æÇÏ·Á ½ÃµµÇÔ
      * @param id
      * @param nick
      */
@@ -307,7 +305,7 @@ public class PollerThread extends Thread {
     }
 
     /**
-     * ìœ ì €ê°€ í”„ë¡œí•„ ì‚¬ì§„ì„ ë³€ê²½í•˜ë ¤ê³  ì‹œë„í•¨
+     * À¯Àú°¡ ÇÁ·ÎÇÊ »çÁøÀ» º¯°æÇÏ·Á°í ½ÃµµÇÔ
      * @param id
      * @param imgid
      */

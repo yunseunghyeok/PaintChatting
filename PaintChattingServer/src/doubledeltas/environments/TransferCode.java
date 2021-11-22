@@ -1,8 +1,8 @@
-/*  Last Update: 20211101 - 5th meeting
+/*  Last Update: 20211119
  *  Authored by DoubleDeltas
  */
 
-package doubledeltas.utils;
+package doubledeltas.environments;
 
 public enum TransferCode {
     // ---- 0x0x ----
@@ -23,9 +23,10 @@ public enum TransferCode {
     CHAT,
     CHAT_SUC,
     CHAT_FAIL,
-    USER_NICK_CHANGE,
+    SEND_IMAGE,
 
     // ---- 0x2x ----
+    USER_NICK_CHANGE,
     USER_NICK_CHANGE_SUC,
     USER_NICK_CHANGE_FAIL,
     USER_PROFILE_CHANGE,

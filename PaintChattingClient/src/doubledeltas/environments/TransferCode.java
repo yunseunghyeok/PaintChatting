@@ -1,4 +1,4 @@
-/*  Last Update: 20211114 - 8th meeting
+/*  Last Update: 20211119
  *  Authored by DoubleDeltas
  */
 
@@ -23,9 +23,10 @@ public enum TransferCode {
     CHAT,
     CHAT_SUC,
     CHAT_FAIL,
-    USER_NICK_CHANGE,
+    SEND_IMAGE,
 
     // ---- 0x2x ----
+    USER_NICK_CHANGE,
     USER_NICK_CHANGE_SUC,
     USER_NICK_CHANGE_FAIL,
     USER_PROFILE_CHANGE,

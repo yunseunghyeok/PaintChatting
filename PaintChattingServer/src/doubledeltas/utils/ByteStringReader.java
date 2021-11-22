@@ -41,7 +41,7 @@ public class ByteStringReader {
             return 0;
         if (count > 4) {
             cur += count - 4;
-            return readInInteger(4);    // ìƒìœ„ ë¹„íŠ¸ ì»·
+            return readInInteger(4);    // »óÀ§ ºñÆ® ÄÆ
         }
 
         int res = 0;

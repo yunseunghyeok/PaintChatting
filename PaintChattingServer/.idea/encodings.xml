@@ -2,5 +2,8 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/doubledeltas/server/Main.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/src/doubledeltas/server/MysqlConnector.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/src/doubledeltas/utils/ByteStringReader.java" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/src/doubledeltas/utils/Logger.java" charset="x-windows-949" />
   </component>
 </project>

@@ -183,9 +183,7 @@ public class ServerThread extends Thread {
 		for (int room : hm.keySet()) {
 			Vector<OutputStream> oss = hm.get(room);
     		for (OutputStream os : oss) {	// hm.get(room): OS vector
-    			if (os == this.os) {
-    				oss.remove(os);
-    			}
+    			if (os == this.os) oss.remove(os);
     		}
 		}
 		try {
@@ -195,7 +193,7 @@ public class ServerThread extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    	this.interrupt();	// ServerThread INTERRUPT
+    	this.interrupt();	// END
     }
     
     /**

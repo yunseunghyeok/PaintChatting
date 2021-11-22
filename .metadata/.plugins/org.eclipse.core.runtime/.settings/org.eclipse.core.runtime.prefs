@@ -1,2 +1,8 @@
-content-types/org.eclipse.core.runtime.text/charset=MS949
+content-types/org.eclipse.core.runtime.text/charset=UTF-8
+content-types/org.eclipse.egit.patch/charset=MS949
+content-types/org.eclipse.jdt.core.javaSource/charset=MS949
+content-types/org.eclipse.ltk.core.refactoring.refactoringHistory/charset=MS949
+content-types/org.eclipse.ltk.core.refactoring.refactoringIndex/charset=MS949
+content-types/org.eclipse.team.genericeditor.diff.extension.patch/charset=MS949
+content-types/org.eclipse.ui.views.log.log/charset=MS949
 eclipse.preferences.version=1

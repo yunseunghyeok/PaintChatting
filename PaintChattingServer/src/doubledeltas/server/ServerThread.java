@@ -38,7 +38,6 @@ public class ServerThread extends Thread {
 			is = socket.getInputStream();
 			os = socket.getOutputStream();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;
 		}
@@ -47,6 +46,7 @@ public class ServerThread extends Thread {
 	}
 	
 	private void route() {
+		
         bsr.setCursor(0);
         try {
         	switch (TransferCode.valueOf(

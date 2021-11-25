@@ -5,31 +5,35 @@
 package doubledeltas.environments;
 
 public enum TransferCode {
-    // ---- 0x0x ----
-    NULL,
-    LOGIN,
-    LOGIN_SUC,
-    LOGIN_FAIL,
-    REGISTER,
-    REGISTER_SUC,
-    REGISTER_FAIL,
-    CONNECTION_CUT,
+    LOGIN						(0x01),
+    LOGIN_SUC					(0x02),
+    LOGIN_FAIL					(0x03),
+    REGISTER					(0x04),
+    REGISTER_SUC				(0x05),
+    REGISTER_FAIL				(0x06),
+    CONNECTION_CUT				(0x07),
+    ROOM_ENTER					(0x08),
+    ROOM_ENTER_SUC				(0x09),
+    ROOM_ENTER_FAIL				(0x0A),
+    ROOM_SOMEONE_JOINED			(0x0B),
+    CHAT						(0x0C),
+    CHAT_SUC					(0x0D),
+    CHAT_FAIL					(0x0E),
+    SEND_IMAGE					(0x0F),
 
-    // ---- 0x1x ----
-    ROOM_ENTER,
-    ROOM_ENTER_SUC,
-    ROOM_ENTER_FAIL,
-    ROOM_SOMEONE_JOINED,
-    CHAT,
-    CHAT_SUC,
-    CHAT_FAIL,
-    SEND_IMAGE,
+    USER_NICK_CHANGE			(0x10),
+    USER_NICK_CHANGE_SUC		(0x11),
+    USER_NICK_CHANGE_FAIL		(0x12),
+    USER_PROFILE_CHANGE			(0x13),
+    USER_PROFILE_CHANGE_SUC		(0x14),	
+    USER_PROFILE_CHANGE_FAIL	(0x15),
+    ROOM_CREATE					(0x16),
+    ROOM_CREATE_SUC				(0x17),
+    ROOM_CREATE_FAIL			(0x18);
+    
+    // ----
 
-    // ---- 0x2x ----
-    USER_NICK_CHANGE,
-    USER_NICK_CHANGE_SUC,
-    USER_NICK_CHANGE_FAIL,
-    USER_PROFILE_CHANGE,
-    USER_PROFILE_CHANGE_SUC,
-    USER_PROFILE_CHANGE_FAIL
+	private final int value;
+	private TransferCode(int value) { this.value = value; }
+	public byte getByte() { return (byte)value; }
 }

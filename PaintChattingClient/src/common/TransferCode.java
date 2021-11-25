@@ -24,11 +24,7 @@ public enum TransferCode {
     CHAT_FAIL,
     SEND_IMAGE,
 
-<<<<<<< HEAD:PaintChattingClient/src/doubledeltas/environments/TransferCode.java
     // ---- 0x2x ----
-=======
-    // ---- 0x1x ----
->>>>>>> ff4603deea05de02f1dda269da81200cc1b882cd:PaintChattingClient/src/common/TransferCode.java
     USER_NICK_CHANGE,
     USER_NICK_CHANGE_SUC,
     USER_NICK_CHANGE_FAIL,

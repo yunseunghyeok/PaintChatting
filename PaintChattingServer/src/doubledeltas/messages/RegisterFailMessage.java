@@ -2,8 +2,11 @@ package doubledeltas.messages;
 
 import doubledeltas.environments.TransferCode;
 
-public class RegisterFailMessage extends Message {
+public class RegisterFailMessage extends Message
+implements ClientRecievable
+{
 	enum RegisterFailReason {
+		UNKNOWN(0x00),
 		DUPLICATED_ID(0x01);
 		
 		private final int value;
@@ -36,7 +39,7 @@ public class RegisterFailMessage extends Message {
 	
 	public RegisterFailMessage(RegisterFailReason reason) {
 		this.bytes = new byte[MSG_SIZE];
-		this.bytes[0] = TransferCode.LOGIN_FAIL.getByte();
+		this.bytes[0] = TransferCode.REGISTER_FAIL.getByte();
 		this.bytes[1] = reason.getByte();
 		
 		this.reason = reason;

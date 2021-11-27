@@ -1,4 +1,4 @@
-주소 및 Port 설정
+A주소 및 Port 설정
 
 From	To	Target IPv4 Address	Port
 ----------------------------------------------------
@@ -26,10 +26,10 @@ ROOM_ENTER			0x08	방 입장 요청		C -> S		UserID(45) RoomID(4)
 ROOM_ENTER_SUC			0x09	방 입장 성공		S -> C		-
 ROOM_ENTER_FAIL			0x0A	방 입장 실패		S -> C		Reason(1)
 ROOM_SOMEONE_JOINED		0x0B	누군가 방 입장함	S -> C [*]	UserNick(45)
-CHAT				0x0C	채팅 처리 요청		C -> S		RoomID(4) UserID(45) Message(1024)
-CHAT_SUC			0x0D	채팅 처리 성공		C -> S [*]	RoomID(4) UserNick(45) Message(1024) Font(45) ImgFileName(45)
+CHAT				0x0C	채팅 처리 요청		C -> S		RoomID(4) UserID(45) Text(1024)
+CHAT_SUC			0x0D	채팅 처리 성공		C -> S [*]	RoomID(4) UserNick(45) Text(1024) Font(45) ImgFileName(45)
 CHAT_FAIL			0x0E	채팅 처리 실패		C -> S		Reason(1)
-SEND_IMAGE			0x0F	이미지 전송		Both		FileName(45) Data(10MiB)
+SEND_IMAGE			0x0F	이미지 전송		Both [*]	FileName(45) Data(10MiB)
 
 USER_NICK_CHANGE		0x10	유저 닉네임 변경 요청	C -> S		UserID(45) NewNick(45)
 USER_NICK_CHANGE_SUC		0x11	유저 닉네임 변경 성공	S -> C		-
@@ -37,7 +37,7 @@ USER_NICK_CHANGE_FAIL		0x12	유저 닉네임 변경 실패	S -> C		Reason(1)
 USER_PROFILE_CHANGE		0x13	유저 프사 변경 요청	C -> S		UserID(45) FileName(45)
 USER_PROFILE_CHANGE_SUC		0x14	유저 프사 변경 성공	S -> C		-
 USER_PROFILE_CHANGE_FAIL	0x15	유저 프사 변경 실패	S -> C		Reason(1)
-ROOM_CREATE			0x16	방 생성 요청		C -> S
-ROOM_CREATE_SUC			0x17	방 생성 성공		S -> C
+ROOM_CREATE			0x16	방 생성 요청		C -> S		UserID(45)
+ROOM_CREATE_SUC			0x17	방 생성 성공		S -> C		RoomID(4)
 
-ROOM_CREATE_FAIL		0x18	방 생성 실패		S -> C
+ROOM_CREATE_FAIL		0x18	방 생성 실패		S -> C		Reason(1)

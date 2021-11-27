@@ -1,6 +1,6 @@
 package doubledeltas.utils;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class ByteStringReader {
     private int cur = 0;
@@ -20,20 +20,12 @@ public class ByteStringReader {
     }
 
     public int getCursor() { return cur; }
+    public boolean moveCursor(int d) { return setCursor(cur + d); }
 
-    public byte[] read(int count) {
-        int len = Math.min(count, bytes.length - cur);
-        if (len < 1) return null;
-
-        byte[] res = new byte[len];
-        for(int j=0; j<len; j++)
-            res[j] = bytes[cur+j];
-        cur += len;
-        return res;
-    }
 
     public String readInString(int count) {
-        return new String(read(count));
+    	cur += count;
+    	return new String(Arrays.copyOfRange(bytes, cur, cur+count));
     }
 
     public int readInInteger(int count) {
@@ -55,5 +47,28 @@ public class ByteStringReader {
 
     public int readInInteger() {
         return readInInteger(4);
+    }
+    
+    public void writeInteger(int n, boolean moveCursor) {
+    	int res = 0;
+    	bytes[cur + 0] = (byte)(n >> 24);
+    	bytes[cur + 1] = (byte)(n >> 16);
+    	bytes[cur + 2] = (byte)(n >> 8);
+    	bytes[cur + 3] = (byte) n;
+    	if (moveCursor) cur += 4;
+    }
+    public void writeInteger(int n) {
+    	writeInteger(n, true);
+    }
+    
+    
+    public void writeString(String str, boolean moveCursor) {
+    	byte[] bs = str.getBytes();
+    	for (int i = 0; i < bs.length; i++)
+    		bytes[cur + i] = bs[i];
+    	if (moveCursor) cur += bs.length;
+    }
+    public void writeString(String str) {
+    	writeString(str, true);
     }
 }

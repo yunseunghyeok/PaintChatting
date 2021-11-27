@@ -2,7 +2,9 @@ package doubledeltas.messages;
 
 import doubledeltas.environments.TransferCode;
 
-public class ConnectionCutMessage extends Message {
+public class ConnectionCutMessage extends Message
+implements ClientRecievable, ServerRecievable
+{
 	private static final int MSG_SIZE = 1;
 	
 	public ConnectionCutMessage(byte[] bytes) {

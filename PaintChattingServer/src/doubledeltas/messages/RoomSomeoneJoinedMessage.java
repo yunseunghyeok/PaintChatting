@@ -3,14 +3,14 @@ package doubledeltas.messages;
 import doubledeltas.environments.TransferCode;
 import doubledeltas.utils.ByteStringReader;
 
-public class LoginMessage extends Message
-implements ServerRecievable
+public class RoomSomeoneJoinedMessage extends Message
+implements Broadcastable, ClientRecievable
 {
 	private static final int MSG_SIZE = 1+45;
-	private String id;
+	private String nick;
 	
-	public LoginMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.ROOM_CREATE.getByte()) return;
+	public RoomSomeoneJoinedMessage(byte[] bytes) {
+		if (bytes[0] != TransferCode.ROOM_SOMEONE_JOINED.getByte()) return;
 		if (bytes.length < MSG_SIZE) return;
 		
 		this.bytes = new byte[MSG_SIZE];
@@ -19,20 +19,20 @@ implements ServerRecievable
 		
 		ByteStringReader bsr = new ByteStringReader(this.bytes);
 		bsr.setCursor(1);
-		this.id = bsr.readInString(45);
+		this.nick = bsr.readInString(45);
 	}
 	
-	public LoginMessage(String id) {
+	public RoomSomeoneJoinedMessage(String nick) {
 		bytes = new byte[MSG_SIZE];
 		ByteStringReader bsr = new ByteStringReader(bytes);
 		
-		bytes[0] = TransferCode.ROOM_CREATE.getByte();
+		bytes[0] = TransferCode.ROOM_SOMEONE_JOINED.getByte();
 		
 		bsr.setCursor(1);
-		bsr.writeString(id, false);
+		bsr.writeString(nick, false);
 		
-		this.id=new String(id);
+		this.nick=new String(nick);
 	}
 	
-	public String getID() { return id; }
+	public String getNickname() { return nick; }
  }

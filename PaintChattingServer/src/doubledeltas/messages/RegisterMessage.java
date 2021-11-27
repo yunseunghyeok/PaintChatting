@@ -3,7 +3,9 @@ package doubledeltas.messages;
 import doubledeltas.environments.TransferCode;
 import doubledeltas.utils.ByteStringReader;
 
-public class RegisterMessage extends Message {
+public class RegisterMessage extends Message
+implements ServerRecievable
+{
 	private static final int MSG_SIZE = 1+45+45+45;
 	private String id, pw, nick;
 	
@@ -23,24 +25,21 @@ public class RegisterMessage extends Message {
 	}
 	
 	public RegisterMessage(String id, String pw, String nick) {
-		ByteStringReader bsr;
 		bytes = new byte[MSG_SIZE];
+		ByteStringReader bsr = new ByteStringReader(bytes);
+		
 		bytes[0] = TransferCode.REGISTER.getByte();
 		
-		byte[] buf;
-		int cur = 1;
-		buf = id.getBytes();
-		for (int i=0; i<buf.length; i++) bytes[cur+i] = buf[i];
-		cur += 45;
-		buf = pw.getBytes();
-		for (int i=0; i<buf.length; i++) bytes[cur+i] = buf[i];
-		cur += 45;
-		buf = nick.getBytes();
-		for (int i=0; i<buf.length; i++) bytes[cur+i] = buf[i];
+		bsr.setCursor(1);
+		bsr.writeString(id, false);
+		bsr.moveCursor(45);
+		bsr.writeString(pw, false);
+		bsr.moveCursor(45);
+		bsr.writeString(nick, false);
 		
-		this.id=id;
-		this.pw=pw;
-		this.nick=nick;
+		this.id=new String(id);
+		this.pw=new String(pw);
+		this.nick=new String(nick);
 	}
 	
 	public String getID() { return id; }

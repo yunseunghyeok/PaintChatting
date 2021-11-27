@@ -3,7 +3,9 @@ package doubledeltas.messages;
 import doubledeltas.environments.TransferCode;
 import doubledeltas.utils.ByteStringReader;
 
-public class RoomEnterMessage extends Message {
+public class RoomEnterMessage extends Message
+implements ServerRecievable
+{
 	private static final int MSG_SIZE = 1+45+4;
 	private String userID;
 	private int roomID;
@@ -23,19 +25,20 @@ public class RoomEnterMessage extends Message {
 	}
 	
 	public RoomEnterMessage(String userID, int roomID) {
-		ByteStringReader bsr;
+		ByteStringReader bsr = new ByteStringReader(bytes);
 		bytes = new byte[MSG_SIZE];
 		bytes[0] = TransferCode.ROOM_ENTER.getByte();
 		
-		byte[] buf;
-		int cur = 1;
-		buf = userID.getBytes();
-		for (int i=0; i<buf.length; i++) bytes[cur+i] = buf[i];
-		cur += 45;
+		bsr.setCursor(1);
+		bsr.writeString(userID, false);
+		bsr.moveCursor(45);
+		bsr.writeInteger(roomID, false);
 		
-		
-		this.id=id;
-		this.pw=pw;
+		this.userID = new String(userID);
+		this.roomID = roomID;
 	}
+	
+	public String getUserID() { return userID; }
+	public int getRoomID() { return roomID; }
 	
 }

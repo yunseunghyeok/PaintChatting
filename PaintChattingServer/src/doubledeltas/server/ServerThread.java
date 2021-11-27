@@ -13,27 +13,25 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import doubledeltas.environments.TransferCode;
+import doubledeltas.messages.Message;
 import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.Logger;
 
 public class ServerThread extends Thread {
+	private static final int BUF_SIZE = 8192;
+	
 	private MysqlConnector con;
 	private Socket socket;
-	private HashMap<Integer, Vector<OutputStream>> hm;
+	private HashMap<Integer, HashMap<String, OutputStream>> hm;
 	private InputStream is;
 	private OutputStream os;
 	private ByteStringReader bsr;
 	
-	public ServerThread(MysqlConnector con, Socket socket, HashMap<Integer, Vector<OutputStream>> hm) {
+	public ServerThread(MysqlConnector con, Socket socket,
+			HashMap<Integer, HashMap<String, OutputStream>> hm) {
 		this.con = con;
 		this.socket = socket;
 		this.hm = hm;
-	}
-	
-	@Override
-	public void run() {
-		Logger.l(String.format("클라이언트 [%s] 접속", socket.getInetAddress().toString()));
-		
 		try {
 			is = socket.getInputStream();
 			os = socket.getOutputStream();
@@ -41,68 +39,22 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 			return;
 		}
-		
-		route();
 	}
 	
-	private void route() {
+	@Override
+	public void run() {
+		Logger.l(String.format("클라이언트 [%s] 접속", socket.getInetAddress().toString()));		
 		
-        bsr.setCursor(0);
-        try {
-        	switch (TransferCode.valueOf(
-            		Integer.toString(is.read())
-            		)) {
-                case LOGIN: {
-                    String  id		= bsr.readInString(45);
-                    String  pw		= bsr.readInString(45);
-                    askLogin(id, pw);
-                    break;
-                }
-                case REGISTER: {
-                    String  id		= bsr.readInString(45);
-                    String  pw		= bsr.readInString(45);
-                    String  nick 	= bsr.readInString(45);
-                    askRegistration(id, pw, nick);
-                    break;
-                }
-                case CONNECTION_CUT:
-                    askConnectionCut();
-                    break;
-                case ROOM_ENTER: {
-                    String  id		= bsr.readInString(45);
-                    int     roomid	= bsr.readInInteger(4);
-                    askRoomEnter(id, roomid);
-                    break;
-                }
-                case CHAT: {
-                    String  id		= bsr.readInString(45);
-                    int     roomid	= bsr.readInInteger(4);
-                    String  msg		= bsr.readInString(1024);
-                    int     imgid	= bsr.readInInteger(4);
-                    askChat(id, roomid, msg, imgid);
-                    break;
-                }
-                case USER_NICK_CHANGE: {
-                    String  id		= bsr.readInString(45);
-                    String  nick	= bsr.readInString(45);
-                    askUserNickChange(id, nick);
-                    break;
-                }
-                case USER_PROFILE_CHANGE: {
-                    String  id		= bsr.readInString(45);
-                    int     imgid	= bsr.readInInteger(4);
-                    askUserProfileChange(id, imgid);
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-        catch (IOException e) {
-        	e.printStackTrace();
-        }
-        return;
-    }
+		byte[] buf = new byte[BUF_SIZE];
+		try {
+			while (is.read(buf) > 0) {
+				Message msg = Message.translate(buf);
+			}	
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	/**
      * 유저가 로그인을 시도
@@ -180,10 +132,10 @@ public class ServerThread extends Thread {
      * 유저가 연결을 종료함. 클라이언트가 종료되었을 때의 처리
      */
     private void askConnectionCut() {
-		for (int room : hm.keySet()) {
-			Vector<OutputStream> oss = hm.get(room);
-    		for (OutputStream os : oss) {	// hm.get(room): OS vector
-    			if (os == this.os) oss.remove(os);
+		for (int roomid : hm.keySet()) {
+			HashMap<String, OutputStream> room = hm.get(roomid);
+    		for (OutputStream os : room.values()) {
+    			if (os == this.os) room.remove(os);
     		}
 		}
 		try {

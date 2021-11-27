@@ -2,8 +2,11 @@ package doubledeltas.messages;
 
 import doubledeltas.environments.TransferCode;
 
-public class LoginFailMessage extends Message {
+public class LoginFailMessage extends Message
+implements ClientRecievable
+{
 	enum LoginFailReason {
+		UNKNOWN(0x00),
 		NO_ID_FOUND(0x01),
 		PASSWORD_WRONG(0x02);
 		

@@ -25,7 +25,7 @@ public class MyInterface extends JFrame {
 	JPanel Canvas;
 	JPanel SelectingColor;
 	JPanel Menu;
-	
+
 	JLabel currentColorLabel = new JLabel();
 
 	JButton menubutton;
@@ -39,11 +39,11 @@ public class MyInterface extends JFrame {
 	JTextArea ChattingSendArea;
 
 	JScrollPane roomScroll;
-	
+
 	ImageIcon menuImage = new ImageIcon("img/메뉴.png");
 	ImageIcon changeColorImage = new ImageIcon("img/색 선택.png");
 	ImageIcon sendImage = new ImageIcon("img/전송.png");
-	
+
 	int sizeX;
 	int sizeY;
 
@@ -55,7 +55,7 @@ public class MyInterface extends JFrame {
 
 	int a[], b[];
 	public int count = 1;
-	public int displayCnt = 1;
+	public int displayCntByMe = 0;
 	Color currentColor = Color.RED;
 	Color baseColor[] = { Color.red, Color.orange, Color.yellow, Color.green, Color.blue, new Color(0, 0, 128),
 			new Color(139, 0, 255) };
@@ -70,17 +70,17 @@ public class MyInterface extends JFrame {
 
 	public MyInterface() {
 		JFrame frame = new JFrame("PaintChatting");
-		
+
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		c = frame.getContentPane();
 		frame.setVisible(true);
 		c.setLayout(null);
 		gbc.fill = GridBagConstraints.NONE;
-		
+
 		sizeX = 1550; // 크기 고정
 		sizeY = 839;
-		
+
 		frame.setSize(sizeX, sizeY);
 		Menu = new JPanel();
 		Menu.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
@@ -97,10 +97,10 @@ public class MyInterface extends JFrame {
 		menubutton.setVisible(true);
 		menubutton.addActionListener(new MenuButtonListener());
 
-		menubutton.setBorderPainted(false); 
-		menubutton.setFocusPainted(false); 
+		menubutton.setBorderPainted(false);
+		menubutton.setFocusPainted(false);
 		menubutton.setContentAreaFilled(false);
-		
+
 		ChattingRoom = new JPanel();
 		ChattingRoom.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 		ChattingRoom.setLayout(grid);
@@ -126,7 +126,7 @@ public class MyInterface extends JFrame {
 		c.add(ChattingRoomName);
 		ChattingRoomName.setBackground(new Color(107, 107, 107));
 		ChattingRoomName.setVisible(true);
-		
+
 		UserList = new JPanel();
 		UserList.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 		UserList.setLayout(null);
@@ -135,10 +135,10 @@ public class MyInterface extends JFrame {
 		c.add(UserList);
 		UserList.setBackground(new Color(107, 107, 107));
 		UserList.setVisible(true);
-			
+
 		new ChattingDisplayPanelByMe();
 		new ChattingDisplayPanelByAnother();
-		
+
 		ChattingSend = new JPanel();
 		ChattingSend.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 		ChattingSend.setLayout(null);
@@ -147,26 +147,26 @@ public class MyInterface extends JFrame {
 		c.add(ChattingSend);
 		ChattingSend.setBackground(new Color(107, 107, 107));
 		ChattingSend.setVisible(true);
-		
+
 		ChattingSendArea = new JTextArea(5, 20);
 		ChattingSendArea.setSize(sizeX - 1100, 100);
 		ChattingSendArea.setLocation(20, 20);
 		ChattingSend.add(ChattingSendArea);
 		ChattingSendArea.setVisible(true);
-		
+
 		sendButton = new JButton(sendImage);
 		ChattingSend.add(sendButton);
 		sendButton.setBounds(480, 50, 90, 30);
 		sendButton.setVisible(true);
 		sendButton.addActionListener(new SendButtonListener());
-		
-		sendButton.setBorderPainted(false); 
-		sendButton.setFocusPainted(false); 
+
+		sendButton.setBorderPainted(false);
+		sendButton.setFocusPainted(false);
 		sendButton.setContentAreaFilled(false);
-		
+
 		new MyCanvas();
 		new SelectingColorPanel();
-		
+
 		Menu.add(menubutton);
 		menubutton.setBounds(5, 25, 90, 30);
 		menubutton.setVisible(true);
@@ -196,6 +196,7 @@ public class MyInterface extends JFrame {
 			new MenuChoice();
 		}
 	}
+
 	class ChattingDisplayPanelByAnother extends JPanel {
 		public ChattingDisplayPanelByAnother() {
 			ChattingDisplayByAnother = new JPanel();
@@ -208,18 +209,24 @@ public class MyInterface extends JFrame {
 			ChattingDisplayByAnother.setBackground(new Color(130, 130, 130));
 		}
 	}
+
 	class ChattingDisplayPanelByMe extends JPanel {
 		public ChattingDisplayPanelByMe() {
 			ChattingDisplayByMe = new JPanel();
 			ChattingDisplayByMe.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
-			ChattingDisplayByMe.setLayout(new FlowLayout());
-			new JScrollPane(ChattingDisplayByMe);
+			ChattingDisplayByMe.setLayout(new GridBagLayout());
 			ChattingDisplayByMe.setSize(sizeX - 1250, sizeY - 200);
 			ChattingDisplayByMe.setLocation(600, 0);
 			c.add(ChattingDisplayByMe);
 			ChattingDisplayByMe.setBackground(new Color(130, 130, 130));
+
+			JScrollPane scrollPane = new JScrollPane(ChattingDisplayByMe, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollPane.setBounds(600, 0, sizeX - 1250, sizeY - 200);
+			c.add(scrollPane);
 		}
 	}
+
 	class MyCanvas extends JPanel {
 		public MyCanvas() {
 			Canvas = new JPanel();
@@ -316,15 +323,15 @@ public class MyInterface extends JFrame {
 					list.clear();
 				}
 			});
-			
+
 			sendImageButton = new JButton("그림 전송");
 			SelectingColor.add(sendImageButton);
 			sendImageButton.setBounds(370, 20, 100, 30);
 			sendImageButton.setVisible(true);
-			
+
 			sendImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 				}
 			});
 		}
@@ -336,16 +343,18 @@ public class MyInterface extends JFrame {
 			currentColorLabel.setVisible(true);
 			currentColorLabel.setBackground(currentColor);
 		}
+
 		public void collocateColorChoiceButton() {
 			openColorChoiceWindowButton = new JButton(changeColorImage);
-			SelectingColor.add(openColorChoiceWindowButton);			
+			SelectingColor.add(openColorChoiceWindowButton);
 			openColorChoiceWindowButton.setBounds(100, 85, 90, 30);
 			openColorChoiceWindowButton.setVisible(true);
 			openColorChoiceWindowButton.addActionListener(new ColorChoiceListener());
-			openColorChoiceWindowButton.setBorderPainted(false); 
-			openColorChoiceWindowButton.setFocusPainted(false); 
+			openColorChoiceWindowButton.setBorderPainted(false);
+			openColorChoiceWindowButton.setFocusPainted(false);
 			openColorChoiceWindowButton.setContentAreaFilled(false);
 		}
+
 		public void collocateBaseColorChoiceButton() {
 			for (int i = 0; i < 7; i++) {
 				baseColorChoice[i].addActionListener(new baseColorListener());
@@ -356,6 +365,7 @@ public class MyInterface extends JFrame {
 				baseColorChoice[i].setVisible(true);
 			}
 		}
+
 		public void penThickNess() {
 			settingPenThickNess = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);
 			SelectingColor.add(settingPenThickNess);
@@ -414,13 +424,37 @@ public class MyInterface extends JFrame {
 			}
 		}
 	}
+
 	class SendButtonListener implements ActionListener {
+		String text1 = "<html>";
+		String text2 = "</html>";
+		String brTag = "<br />";
+
 		public void actionPerformed(ActionEvent e) {
+			JLabel displayLabel;
+			String target = ChattingSendArea.getText();
+			String temp = text1 + target + text2;
+	
+			temp = temp.replaceAll("\\n", brTag);
+			
+			System.out.println(temp);
+			displayLabel = new JLabel(temp);
+			displayLabel.setPreferredSize(new Dimension(250, 70));
+			gbcFormByMe(displayLabel, 0, displayCntByMe, 1, 1);
+			roomScroll.updateUI();
+			displayCntByMe++;
 			ChattingSendArea.setText("");
-			JLabel displayLabel = new JLabel(ChattingSendArea.getText());
-			ChattingDisplayByMe.add(displayLabel);
 		}
 	}
+
+	public void gbcFormByMe(Component c, int x, int y, int w, int h) {
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = w;
+		gbc.gridheight = h;
+		ChattingDisplayByMe.add(c, gbc);
+	}
+
 	public static void main(String[] args) {
 		new MyInterface();
 	}

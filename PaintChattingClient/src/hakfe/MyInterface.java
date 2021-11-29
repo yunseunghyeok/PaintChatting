@@ -39,7 +39,7 @@ public class MyInterface extends JFrame {
 	JTextArea ChattingSendArea;
 
 	JScrollPane roomScroll;
-
+	JScrollPane scrollPane;
 	ImageIcon menuImage = new ImageIcon("img/메뉴.png");
 	ImageIcon changeColorImage = new ImageIcon("img/색 선택.png");
 	ImageIcon sendImage = new ImageIcon("img/전송.png");
@@ -220,7 +220,7 @@ public class MyInterface extends JFrame {
 			c.add(ChattingDisplayByMe);
 			ChattingDisplayByMe.setBackground(new Color(130, 130, 130));
 
-			JScrollPane scrollPane = new JScrollPane(ChattingDisplayByMe, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+			scrollPane = new JScrollPane(ChattingDisplayByMe, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			scrollPane.setBounds(600, 0, sizeX - 1250, sizeY - 200);
 			c.add(scrollPane);
@@ -331,11 +331,19 @@ public class MyInterface extends JFrame {
 
 			sendImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-
+					JPanel gpPanel = new JPanel();
+					gpPanel.setBackground(Color.white);
+					gpPanel.setPreferredSize(new Dimension(100, 100));
+					JLabel st = new JLabel();
+					gbcFormByMe(gpPanel, 0, displayCntByMe, 1, 1);
+					displayCntByMe ++;
+					st.setPreferredSize(new Dimension(20, 20));
+					gbcFormByMe(st, 0, displayCntByMe, 1, 1);
+					displayCntByMe ++;
+					scrollPane.updateUI();
 				}
 			});
 		}
-
 		public void collocateCurrentColorLabel() {
 			SelectingColor.add(currentColorLabel);
 			currentColorLabel.setOpaque(true);
@@ -371,12 +379,12 @@ public class MyInterface extends JFrame {
 			SelectingColor.add(settingPenThickNess);
 			settingPenThickNess.setMinorTickSpacing(1);
 			settingPenThickNess.setMajorTickSpacing(5);
-			;
+
 			settingPenThickNess.setPaintTicks(true);
 			settingPenThickNess.setPaintLabels(true);
 
 			settingPenThickNess.setBounds(80, 140, 500, 50);
-			;
+
 			settingPenThickNess.setVisible(true);
 			settingPenThickNess.addChangeListener(new settingPenThickNessListener());
 
@@ -434,14 +442,12 @@ public class MyInterface extends JFrame {
 			JLabel displayLabel;
 			String target = ChattingSendArea.getText();
 			String temp = text1 + target + text2;
-	
+
 			temp = temp.replaceAll("\\n", brTag);
-			
-			System.out.println(temp);
+
 			displayLabel = new JLabel(temp);
 			displayLabel.setPreferredSize(new Dimension(250, 70));
 			gbcFormByMe(displayLabel, 0, displayCntByMe, 1, 1);
-			roomScroll.updateUI();
 			displayCntByMe++;
 			ChattingSendArea.setText("");
 		}

@@ -10,10 +10,7 @@ import java.net.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Vector;
-
-import doubledeltas.environments.TransferCode;
-import doubledeltas.messages.Message;
+import doubledeltas.messages.*;
 import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.Logger;
 
@@ -45,15 +42,32 @@ public class ServerThread extends Thread {
 	public void run() {
 		Logger.l(String.format("클라이언트 [%s] 접속", socket.getInetAddress().toString()));		
 		
-		byte[] buf = new byte[BUF_SIZE];
+		Message msg = null;
 		try {
-			while (is.read(buf) > 0) {
-				Message msg = Message.translate(buf);
-			}	
+			while (true) {
+				msg = Message.translate(is);
+
+				if (msg instanceof LoginMessage) handle((LoginMessage)msg);
+				//else
+					//Logger.l(String.format("클라이언트 [%s]의 빈 메시지 받음.", socket.getInetAddress().toString()));
+				
+				if (msg instanceof ConnectionCutMessage) {
+					Logger.l(String.format("클라이언트 [%s]가 접속을 강제 종료함.", socket.getInetAddress().toString()));
+					break;
+				}
+			}
 		}
-		catch (IOException ex) {
+		catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		finally {
+			this.interrupt();
+		}
+	}
+	
+	private void handle(LoginMessage msg) {
+		Logger.l(String.format("클라이언트 [%s]의 LoginMessage 받음.", socket.getInetAddress().toString()));
+		Logger.l(String.format("id: %s, pw: %s", msg.getID(), msg.getPassword()));
 	}
 	
 	/**
@@ -62,7 +76,7 @@ public class ServerThread extends Thread {
      * @param pw
      */
     private void askLogin(String id, String pw) {
-        if (!doesIDexists(id)) {
+        if (!doesIDexist(id)) {
             // send "LOGIN_FAIL 1" command to client socket
             Logger.l(String.format("%s 로그인 실패.", id));
             return;
@@ -85,7 +99,7 @@ public class ServerThread extends Thread {
      * @param nick
      */
     private void askRegistration(String id, String pw, String nick) {
-        if (doesIDexists(id)) {
+        if (doesIDexist(id)) {
             // send "REGISTER_FAIL 1" command to client socket
             Logger.l(String.format("%s 회원가입 실패. ID 중복.", id));
             return;
@@ -101,7 +115,7 @@ public class ServerThread extends Thread {
         return;
     }
     
-    private boolean doesIDexists(String id) {
+    private boolean doesIDexist(String id) {
         try {
             ResultSet rs = con.sendQuery(String.format(
             		"SELECT id FROM User WHERE id='%s'",

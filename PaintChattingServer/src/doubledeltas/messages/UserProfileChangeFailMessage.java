@@ -5,6 +5,7 @@ import doubledeltas.environments.TransferCode;
 public class UserProfileChangeFailMessage extends Message
 implements ClientRecievable
 {
+	static final int MSG_SIZE = 1+1;
 	enum UserProfileChangeFailReason {
 		UNKNOWN(0x00);
 		
@@ -21,11 +22,10 @@ implements ClientRecievable
 		}
 	}
 	
-	private static final int MSG_SIZE = 1+1;
 	private UserProfileChangeFailReason reason;
 	
 	public UserProfileChangeFailMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.USER_NICK_CHANGE_FAIL.getByte()) return;
+		if (bytes[0] != TransferCode.USER_NICK_CHANGE_FAIL) return;
 		if (bytes.length < MSG_SIZE) return;
 
 		reason = UserProfileChangeFailReason.get(bytes[0]);
@@ -38,7 +38,7 @@ implements ClientRecievable
 	
 	public UserProfileChangeFailMessage(UserProfileChangeFailReason reason) {
 		this.bytes = new byte[MSG_SIZE];
-		this.bytes[0] = TransferCode.USER_NICK_CHANGE_FAIL.getByte();
+		this.bytes[0] = TransferCode.USER_NICK_CHANGE_FAIL;
 		this.bytes[1] = reason.getByte();
 		
 		this.reason = reason;

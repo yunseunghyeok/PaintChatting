@@ -5,10 +5,10 @@ import doubledeltas.environments.TransferCode;
 public class UserNickChangeSucMessage extends Message
 implements ClientRecievable
 {
-	private static final int MSG_SIZE = 1;
+	static final int MSG_SIZE = 1;
 	
 	public UserNickChangeSucMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.USER_NICK_CHANGE_SUC.getByte()) return;
+		if (bytes[0] != TransferCode.USER_NICK_CHANGE_SUC) return;
 		if (bytes.length < MSG_SIZE) return;
 		
 		this.bytes = new byte[1];
@@ -18,6 +18,6 @@ implements ClientRecievable
 
 	public UserNickChangeSucMessage() {
 		this.bytes = new byte[1];
-		this.bytes[0] = TransferCode.USER_NICK_CHANGE_SUC.getByte();
+		this.bytes[0] = TransferCode.USER_NICK_CHANGE_SUC;
 	}
 }

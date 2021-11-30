@@ -6,12 +6,12 @@ import doubledeltas.utils.ByteStringReader;
 public class RoomEnterMessage extends Message
 implements ServerRecievable
 {
-	private static final int MSG_SIZE = 1+45+4;
+	static final int MSG_SIZE = 1+45+4;
 	private String userID;
 	private int roomID;
 	
 	public RoomEnterMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.ROOM_ENTER.getByte()) return;
+		if (bytes[0] != TransferCode.ROOM_ENTER) return;
 		if (bytes.length < MSG_SIZE) return;
 		
 		this.bytes = new byte[MSG_SIZE];
@@ -27,7 +27,7 @@ implements ServerRecievable
 	public RoomEnterMessage(String userID, int roomID) {
 		ByteStringReader bsr = new ByteStringReader(bytes);
 		bytes = new byte[MSG_SIZE];
-		bytes[0] = TransferCode.ROOM_ENTER.getByte();
+		bytes[0] = TransferCode.ROOM_ENTER;
 		
 		bsr.setCursor(1);
 		bsr.writeString(userID, false);

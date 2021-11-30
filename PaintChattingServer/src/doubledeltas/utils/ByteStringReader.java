@@ -25,7 +25,7 @@ public class ByteStringReader {
 
     public String readInString(int count) {
     	cur += count;
-    	return new String(Arrays.copyOfRange(bytes, cur, cur+count));
+    	return new String(Arrays.copyOfRange(bytes, cur-count, cur)).replaceAll("\0", "");
     }
 
     public int readInInteger(int count) {

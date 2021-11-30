@@ -5,6 +5,7 @@ import doubledeltas.environments.TransferCode;
 public class LoginFailMessage extends Message
 implements ClientRecievable
 {
+	static final int MSG_SIZE = 1+1;
 	enum LoginFailReason {
 		UNKNOWN(0x00),
 		NO_ID_FOUND(0x01),
@@ -23,11 +24,10 @@ implements ClientRecievable
 		}
 	}
 	
-	private static final int MSG_SIZE = 1+1;
 	private LoginFailReason reason;
 	
 	public LoginFailMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.LOGIN_FAIL.getByte()) return;
+		if (bytes[0] != TransferCode.LOGIN_FAIL) return;
 		if (bytes.length < MSG_SIZE) return;
 
 		reason = LoginFailReason.get(bytes[0]);
@@ -40,7 +40,7 @@ implements ClientRecievable
 	
 	public LoginFailMessage(LoginFailReason reason) {
 		this.bytes = new byte[MSG_SIZE];
-		this.bytes[0] = TransferCode.LOGIN_FAIL.getByte();
+		this.bytes[0] = TransferCode.LOGIN_FAIL;
 		this.bytes[1] = reason.getByte();
 		
 		this.reason = reason;

@@ -6,12 +6,12 @@ import doubledeltas.utils.ByteStringReader;
 public class ChatMessage extends Message
 implements ServerRecievable
 {
-	private static final int MSG_SIZE = 1+4+45+1024;
+	static final int MSG_SIZE = 1+4+45+1024;
 	private int roomID;
 	private String userID, text;
 	
 	public ChatMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.CHAT.getByte()) return;
+		if (bytes[0] != TransferCode.CHAT) return;
 		if (bytes.length < MSG_SIZE) return;
 		
 		this.bytes = new byte[MSG_SIZE];
@@ -29,7 +29,7 @@ implements ServerRecievable
 		bytes = new byte[MSG_SIZE];
 		ByteStringReader bsr = new ByteStringReader(bytes);
 		
-		bytes[0] = TransferCode.CHAT.getByte();
+		bytes[0] = TransferCode.CHAT;
 		
 		bsr.setCursor(1);
 		bsr.writeInteger(roomID);

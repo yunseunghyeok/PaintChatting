@@ -6,11 +6,11 @@ import doubledeltas.utils.ByteStringReader;
 public class RegisterMessage extends Message
 implements ServerRecievable
 {
-	private static final int MSG_SIZE = 1+45+45+45;
+	static final int MSG_SIZE = 1+45+45+45;
 	private String id, pw, nick;
 	
 	public RegisterMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.REGISTER.getByte()) return;
+		if (bytes[0] != TransferCode.REGISTER) return;
 		if (bytes.length < MSG_SIZE) return;
 		
 		this.bytes = new byte[MSG_SIZE];
@@ -28,7 +28,7 @@ implements ServerRecievable
 		bytes = new byte[MSG_SIZE];
 		ByteStringReader bsr = new ByteStringReader(bytes);
 		
-		bytes[0] = TransferCode.REGISTER.getByte();
+		bytes[0] = TransferCode.REGISTER;
 		
 		bsr.setCursor(1);
 		bsr.writeString(id, false);

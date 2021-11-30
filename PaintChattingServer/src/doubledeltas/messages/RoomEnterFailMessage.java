@@ -5,6 +5,7 @@ import doubledeltas.environments.TransferCode;
 public class RoomEnterFailMessage extends Message
 implements ClientRecievable
 {
+	static final int MSG_SIZE = 1+1;
 	enum RoomEnterFailReason {
 		UNKNOWN(0x00);
 		
@@ -21,11 +22,10 @@ implements ClientRecievable
 		}
 	}
 	
-	private static final int MSG_SIZE = 1+1;
 	private RoomEnterFailReason reason;
 	
 	public RoomEnterFailMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.ROOM_ENTER_FAIL.getByte()) return;
+		if (bytes[0] != TransferCode.ROOM_ENTER_FAIL) return;
 		if (bytes.length < MSG_SIZE) return;
 
 		reason = RoomEnterFailReason.get(bytes[0]);
@@ -38,7 +38,7 @@ implements ClientRecievable
 	
 	public RoomEnterFailMessage(RoomEnterFailReason reason) {
 		this.bytes = new byte[MSG_SIZE];
-		this.bytes[0] = TransferCode.ROOM_ENTER_FAIL.getByte();
+		this.bytes[0] = TransferCode.ROOM_ENTER_FAIL;
 		this.bytes[1] = reason.getByte();
 		
 		this.reason = reason;

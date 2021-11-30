@@ -6,12 +6,12 @@ import doubledeltas.utils.ByteStringReader;
 public class ChatSucMessage extends Message
 implements ClientRecievable
 {
-	private static final int MSG_SIZE = 1+4+45+1024+45+45;
+	static final int MSG_SIZE = 1+4+45+1024+45+45;
 	private int roomID;
 	private String userID, text, font, imgFileName;
 	
 	public ChatSucMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.CHAT_SUC.getByte()) return;
+		if (bytes[0] != TransferCode.CHAT_SUC) return;
 		if (bytes.length < MSG_SIZE) return;
 		
 		this.bytes = new byte[MSG_SIZE];
@@ -31,7 +31,7 @@ implements ClientRecievable
 		bytes = new byte[MSG_SIZE];
 		ByteStringReader bsr = new ByteStringReader(bytes);
 		
-		bytes[0] = TransferCode.CHAT_SUC.getByte();
+		bytes[0] = TransferCode.CHAT_SUC;
 		
 		bsr.setCursor(1);
 		bsr.writeInteger(roomID);

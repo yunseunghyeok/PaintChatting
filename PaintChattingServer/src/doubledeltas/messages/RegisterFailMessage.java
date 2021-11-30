@@ -5,6 +5,7 @@ import doubledeltas.environments.TransferCode;
 public class RegisterFailMessage extends Message
 implements ClientRecievable
 {
+	static final int MSG_SIZE = 1+1;
 	enum RegisterFailReason {
 		UNKNOWN(0x00),
 		DUPLICATED_ID(0x01);
@@ -22,11 +23,10 @@ implements ClientRecievable
 		}
 	}
 	
-	private static final int MSG_SIZE = 1+1;
 	private RegisterFailReason reason;
 	
 	public RegisterFailMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.REGISTER_FAIL.getByte()) return;
+		if (bytes[0] != TransferCode.REGISTER_FAIL) return;
 		if (bytes.length < MSG_SIZE) return;
 
 		reason = RegisterFailReason.get(bytes[0]);
@@ -39,7 +39,7 @@ implements ClientRecievable
 	
 	public RegisterFailMessage(RegisterFailReason reason) {
 		this.bytes = new byte[MSG_SIZE];
-		this.bytes[0] = TransferCode.REGISTER_FAIL.getByte();
+		this.bytes[0] = TransferCode.REGISTER_FAIL;
 		this.bytes[1] = reason.getByte();
 		
 		this.reason = reason;

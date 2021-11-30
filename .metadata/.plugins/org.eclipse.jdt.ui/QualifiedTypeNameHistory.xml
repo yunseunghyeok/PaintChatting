@@ -4,8 +4,6 @@
     <fullyQualifiedTypeName name="java.util.HashMap"/>
     <fullyQualifiedTypeName name="java.util.Vector"/>
     <fullyQualifiedTypeName name="doubledeltas.utils.ByteStringReader"/>
-    <fullyQualifiedTypeName name="doubledeltas.messages.LoginMessage"/>
-    <fullyQualifiedTypeName name="doubledeltas.environments.TransferCode"/>
     <fullyQualifiedTypeName name="doubledeltas.messages.LoginFailReason"/>
     <fullyQualifiedTypeName name="doubledeltas.messages.LoginFailMessage"/>
     <fullyQualifiedTypeName name="java.util.Arrays"/>
@@ -16,4 +14,9 @@
     <fullyQualifiedTypeName name="doubledeltas.messages.Message"/>
     <fullyQualifiedTypeName name="doubledeltas.server.ServerThread"/>
     <fullyQualifiedTypeName name="doubledeltas.messages.Broadcastable"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.ConnectionCutMessage"/>
+    <fullyQualifiedTypeName name="java.io.InputStream"/>
+    <fullyQualifiedTypeName name="doubledeltas.environments.TransferCode"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.LoginMessage"/>
+    <fullyQualifiedTypeName name="java.net.SocketException"/>
 </qualifiedTypeNameHistroy>

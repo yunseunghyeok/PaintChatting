@@ -13,8 +13,11 @@ import doubledeltas.utils.Logger;
 
 public class Main {
 	private static Scanner sc = new Scanner(System.in);
+	private static Thread th;
+	private static ServerSocket server;
 
     public static void main(String[] args) {
+		
 		MysqlConnector con =
 				new MysqlConnector("localhost", "root", "smartist2!");
 				// new MysqlConnector("192.168.0.136", "guest", "paintchat123@");
@@ -24,7 +27,6 @@ public class Main {
 			return;
 		}
 		
-		ServerSocket server;
 		HashMap<Integer /*채팅방 ID*/, HashMap<String /*아이디*/, OutputStream /*온라인 유저의 OS*/>> hm;
 		
 		try {
@@ -44,6 +46,14 @@ public class Main {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
+		}
+		finally {
+			try {
+				server.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 } // Main class END

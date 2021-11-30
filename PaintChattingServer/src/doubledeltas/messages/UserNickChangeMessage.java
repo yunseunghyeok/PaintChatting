@@ -6,11 +6,11 @@ import doubledeltas.utils.ByteStringReader;
 public class UserNickChangeMessage extends Message
 implements ServerRecievable
 {
-	private static final int MSG_SIZE = 1+45+45;
+	static final int MSG_SIZE = 1+45+45;
 	private String id, newNick;
 	
 	public UserNickChangeMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.USER_NICK_CHANGE.getByte()) return;
+		if (bytes[0] != TransferCode.USER_NICK_CHANGE) return;
 		if (bytes.length < MSG_SIZE) return;
 		
 		this.bytes = new byte[MSG_SIZE];
@@ -27,7 +27,7 @@ implements ServerRecievable
 		bytes = new byte[MSG_SIZE];
 		ByteStringReader bsr = new ByteStringReader(bytes);
 		
-		bytes[0] = TransferCode.USER_NICK_CHANGE.getByte();
+		bytes[0] = TransferCode.USER_NICK_CHANGE;
 		
 		bsr.setCursor(1);
 		bsr.writeString(id, false);

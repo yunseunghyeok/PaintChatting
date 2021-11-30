@@ -26,8 +26,8 @@ public class MyInterface extends JFrame {
 	JPanel SelectingColor;
 	JPanel Menu;
 
+	JLabel RoomName;
 	JLabel currentColorLabel = new JLabel();
-
 	JButton menubutton;
 	JButton addChattingRoomButton = new JButton("방 추가");
 	JButton sendButton;
@@ -126,7 +126,13 @@ public class MyInterface extends JFrame {
 		c.add(ChattingRoomName);
 		ChattingRoomName.setBackground(new Color(107, 107, 107));
 		ChattingRoomName.setVisible(true);
-
+		
+		String roomname = ""; // db에서 가져와야 함
+		RoomName = new JLabel("방 이름이 여기 나옵니다.");
+		ChattingRoomName.add(RoomName);
+		RoomName.setBounds(35, 20, 200, 30);
+		RoomName.setVisible(true);
+		
 		UserList = new JPanel();
 		UserList.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 		UserList.setLayout(null);
@@ -219,14 +225,15 @@ public class MyInterface extends JFrame {
 			ChattingDisplayByMe.setLocation(600, 0);
 			c.add(ChattingDisplayByMe);
 			ChattingDisplayByMe.setBackground(new Color(130, 130, 130));
-
+			
 			scrollPane = new JScrollPane(ChattingDisplayByMe, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			scrollPane.setBounds(600, 0, sizeX - 1250, sizeY - 200);
+			scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 			c.add(scrollPane);
 		}
 	}
-
+	
 	class MyCanvas extends JPanel {
 		public MyCanvas() {
 			Canvas = new JPanel();

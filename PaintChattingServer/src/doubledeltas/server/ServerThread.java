@@ -21,6 +21,7 @@ public class ServerThread extends Thread {
 	private HashMap<Integer, HashMap<String, DataOutputStream>> hm;
 	private DataInputStream dis;
 	private DataOutputStream dos;
+	private MessageQueues qs;
 	
 	public ServerThread(MysqlConnector con, Socket socket,
 			HashMap<Integer, HashMap<String, DataOutputStream>> hm) {
@@ -30,6 +31,7 @@ public class ServerThread extends Thread {
 		try {
 			dis = new DataInputStream(socket.getInputStream());
 			dos = new DataOutputStream(socket.getOutputStream());
+			qs = new MessageQueues(dis);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -43,7 +45,7 @@ public class ServerThread extends Thread {
 		Message msg = null;
 		try {
 			while (true) {
-				msg = Message.translate(dis);
+				msg = qs.waitForMessage();
 
 				if (msg instanceof LoginMessage) handle((LoginMessage)msg);
 				//else

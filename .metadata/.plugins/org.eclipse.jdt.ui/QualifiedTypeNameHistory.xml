@@ -16,9 +16,12 @@
     <fullyQualifiedTypeName name="java.io.InputStream"/>
     <fullyQualifiedTypeName name="doubledeltas.messages.LoginMessage"/>
     <fullyQualifiedTypeName name="java.net.SocketException"/>
-    <fullyQualifiedTypeName name="java.io.DataInputStream"/>
     <fullyQualifiedTypeName name="doubledeltas.environments.TransferCode"/>
     <fullyQualifiedTypeName name="java.io.DataOutputStream"/>
     <fullyQualifiedTypeName name="java.util.HashMap"/>
     <fullyQualifiedTypeName name="java.util.Vector"/>
+    <fullyQualifiedTypeName name="java.io.DataInputStream"/>
+    <fullyQualifiedTypeName name="java.util.LinkedList"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.MessageQueues"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.TransferCode"/>
 </qualifiedTypeNameHistroy>

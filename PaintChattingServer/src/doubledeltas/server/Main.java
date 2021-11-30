@@ -2,8 +2,8 @@ package doubledeltas.server;
 
 import doubledeltas.environments.*;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -27,11 +27,11 @@ public class Main {
 			return;
 		}
 		
-		HashMap<Integer /*채팅방 ID*/, HashMap<String /*아이디*/, OutputStream /*온라인 유저의 OS*/>> hm;
+		HashMap<Integer /*채팅방 ID*/, HashMap<String /*아이디*/, DataOutputStream /*온라인 유저의 OS*/>> hm;
 		
 		try {
 			server = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
-			hm = new HashMap<Integer, HashMap<String, OutputStream>>();	// String: id
+			hm = new HashMap<Integer, HashMap<String, DataOutputStream>>();	// String: id
 			
 			Socket socket;
 			

@@ -1,9 +1,8 @@
 package doubledeltas.messages;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import doubledeltas.messages.*;
 
 public class SendImageMessage extends Message
 implements Broadcastable, ClientRecievable, ServerRecievable
@@ -12,11 +11,12 @@ implements Broadcastable, ClientRecievable, ServerRecievable
 	File file;
 	
 	public SendImageMessage(String fileName, File file) {
-		
+		this.fileName = new String(fileName);
+		this.file = file;
 	}
 	
 	@Override
-	public void send(OutputStream os) throws IOException {
-		
+	public void send(DataOutputStream dos) throws IOException {
+		// TODO: ±¸Çö
 	}
 }

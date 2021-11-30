@@ -1,49 +1,29 @@
 package doubledeltas.messages;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import doubledeltas.environments.TransferCode;
 
 public class UserNickChangeFailMessage extends Message
 implements ClientRecievable
 {
-	static final int MSG_SIZE = 1+1;
-	enum UserNickChangeFailReason {
-		UNKNOWN(0x00);
-		
-		private final int value;
-		private UserNickChangeFailReason(int value) {
-			this.value = value;
-		}
-		public byte getByte() { return (byte)value; }
-		public static UserNickChangeFailReason get(byte id) {
-			for (UserNickChangeFailReason r : UserNickChangeFailReason.values()) {
-				if (id == r.getByte()) return r;
-			}
-			return null;
-		}
-	}
+	public static final byte
+	UNKNOWN = 0x00;
 	
-	private UserNickChangeFailReason reason;
+	public byte reason;
 	
-	public UserNickChangeFailMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.USER_NICK_CHANGE_FAIL) return;
-		if (bytes.length < MSG_SIZE) return;
-
-		reason = UserNickChangeFailReason.get(bytes[0]);
-		if (reason == null) return;
-		
-		this.bytes = new byte[MSG_SIZE];
-		for (int i=0; i<MSG_SIZE; i++)
-			this.bytes[i] = bytes[i];
-	}
-	
-	public UserNickChangeFailMessage(UserNickChangeFailReason reason) {
-		this.bytes = new byte[MSG_SIZE];
-		this.bytes[0] = TransferCode.USER_NICK_CHANGE_FAIL;
-		this.bytes[1] = reason.getByte();
-		
+	public UserNickChangeFailMessage(byte reason) {
+		this.type = TransferCode.USER_NICK_CHANGE_FAIL;
 		this.reason = reason;
 	}
 	
-	public UserNickChangeFailReason getReason() { return reason; }
+	@Override
+	public void send(DataOutputStream dos) throws IOException {
+		super.send(dos);
+		dos.writeByte(reason);
+	}
+	
+	public byte getReason() { return reason; }
 }
 

@@ -1,23 +1,19 @@
 package doubledeltas.messages;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import doubledeltas.environments.TransferCode;
 
 public class RegisterSucMessage extends Message
 implements ClientRecievable
-{
-	static final int MSG_SIZE = 1;
-	
-	public RegisterSucMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.REGISTER_SUC) return;
-		if (bytes.length < MSG_SIZE) return;
-		
-		this.bytes = new byte[1];
-		for (int i=0; i<MSG_SIZE; i++)
-			this.bytes[i] = bytes[i];
+{	
+	public RegisterSucMessage() {
+		this.type = TransferCode.REGISTER_SUC;
 	}
 	
-	public RegisterSucMessage() {
-		this.bytes = new byte[1];
-		this.bytes[0] = TransferCode.REGISTER_SUC;
+	@Override
+	public void send(DataOutputStream dos) throws IOException {
+		super.send(dos);
 	}
 }

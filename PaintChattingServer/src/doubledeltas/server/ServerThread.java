@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import doubledeltas.messages.*;
-import doubledeltas.utils.ByteStringReader;
 import doubledeltas.utils.Logger;
 
 public class ServerThread extends Thread {
@@ -19,19 +18,18 @@ public class ServerThread extends Thread {
 	
 	private MysqlConnector con;
 	private Socket socket;
-	private HashMap<Integer, HashMap<String, OutputStream>> hm;
-	private InputStream is;
-	private OutputStream os;
-	private ByteStringReader bsr;
+	private HashMap<Integer, HashMap<String, DataOutputStream>> hm;
+	private DataInputStream dis;
+	private DataOutputStream dos;
 	
 	public ServerThread(MysqlConnector con, Socket socket,
-			HashMap<Integer, HashMap<String, OutputStream>> hm) {
+			HashMap<Integer, HashMap<String, DataOutputStream>> hm) {
 		this.con = con;
 		this.socket = socket;
 		this.hm = hm;
 		try {
-			is = socket.getInputStream();
-			os = socket.getOutputStream();
+			dis = new DataInputStream(socket.getInputStream());
+			dos = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -45,14 +43,14 @@ public class ServerThread extends Thread {
 		Message msg = null;
 		try {
 			while (true) {
-				msg = Message.translate(is);
+				msg = Message.translate(dis);
 
 				if (msg instanceof LoginMessage) handle((LoginMessage)msg);
 				//else
 					//Logger.l(String.format("클라이언트 [%s]의 빈 메시지 받음.", socket.getInetAddress().toString()));
 				
 				if (msg instanceof ConnectionCutMessage) {
-					Logger.l(String.format("클라이언트 [%s]가 접속을 강제 종료함.", socket.getInetAddress().toString()));
+					Logger.l(String.format("클라이언트 [%s]가 접속을 종료함.", socket.getInetAddress().toString()));
 					break;
 				}
 			}
@@ -147,14 +145,14 @@ public class ServerThread extends Thread {
      */
     private void askConnectionCut() {
 		for (int roomid : hm.keySet()) {
-			HashMap<String, OutputStream> room = hm.get(roomid);
-    		for (OutputStream os : room.values()) {
-    			if (os == this.os) room.remove(os);
+			HashMap<String, DataOutputStream> room = hm.get(roomid);
+    		for (DataOutputStream dos : room.values()) {
+    			if (dos == this.dos) room.remove(dos);
     		}
 		}
 		try {
-			is.close();
-			os.close();
+			dis.close();
+			dos.close();
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();

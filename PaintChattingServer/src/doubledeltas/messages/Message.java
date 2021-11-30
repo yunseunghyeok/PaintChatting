@@ -6,165 +6,62 @@ import java.net.SocketException;
 import java.util.HashMap;
 
 import doubledeltas.environments.TransferCode;
-import doubledeltas.server.ServerThread;
-import doubledeltas.utils.Logger;
-import doubledeltas.messages.*;
 
 public abstract class Message {
-	protected byte[] bytes;
+	protected byte type;
 	
-	public static final Message translate(InputStream is) throws SocketException {
+	public static final Message translate(DataInputStream dis) throws SocketException {
 		try {		
-			int b = is.read();
-			byte[] bytes;
-			switch ((byte)b) {
+			byte b = dis.readByte();
+			switch (b) {
 			case TransferCode.LOGIN:
-				bytes = new byte[LoginMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new LoginMessage(bytes);
-				
+				return new LoginMessage(dis.readUTF(), dis.readUTF());
 			case TransferCode.LOGIN_SUC:
-				bytes = new byte[LoginSucMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new LoginSucMessage(bytes);
-				
+				return new LoginSucMessage();
 			case TransferCode.LOGIN_FAIL:
-				bytes = new byte[LoginFailMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new LoginFailMessage(bytes);
-				
+				return new LoginFailMessage(dis.readByte());
 			case TransferCode.REGISTER:
-				bytes = new byte[RegisterMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				is.read(bytes);
-				return new RegisterMessage(bytes);
-				
+				return new RegisterMessage(dis.readUTF(), dis.readUTF(), dis.readUTF());
 			case TransferCode.REGISTER_SUC:
-				bytes = new byte[RegisterSucMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				is.read(bytes);
-				return new RegisterSucMessage(bytes);
-				
+				return new RegisterSucMessage();
 			case TransferCode.REGISTER_FAIL:
-				bytes = new byte[RegisterFailMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				is.read(bytes);
-				return new RegisterFailMessage(bytes);
-				
+				return new RegisterFailMessage(dis.readByte());
 			case TransferCode.CONNECTION_CUT:
-				bytes = new byte[ConnectionCutMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new ConnectionCutMessage(bytes);
-				
+				return new ConnectionCutMessage();
 			case TransferCode.ROOM_ENTER:
-				bytes = new byte[RoomEnterMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new RoomEnterMessage(bytes);
-				
+				return new RoomEnterMessage(dis.readUTF(), dis.readInt());
 			case TransferCode.ROOM_ENTER_SUC:
-				bytes = new byte[RoomEnterSucMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new RoomEnterSucMessage(bytes);
-				
+				return new RoomEnterSucMessage();
 			case TransferCode.ROOM_ENTER_FAIL:
-				bytes = new byte[RoomEnterFailMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new RoomEnterFailMessage(bytes);
-				
+				return new RoomEnterFailMessage(dis.readByte());
 			case TransferCode.ROOM_SOMEONE_JOINED:
-				bytes = new byte[RoomSomeoneJoinedMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new RoomSomeoneJoinedMessage(bytes);
-				
+				return new RoomSomeoneJoinedMessage(dis.readUTF());
 			case TransferCode.CHAT:
-				bytes = new byte[ChatMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new ChatMessage(bytes);
-				
+				return new ChatMessage(dis.readInt(), dis.readUTF(), dis.readUTF());
 			case TransferCode.CHAT_SUC:
-				bytes = new byte[ChatSucMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new ChatSucMessage(bytes);
-				
+				return new ChatSucMessage(dis.readInt(), dis.readUTF(), dis.readUTF(), dis.readUTF(), dis.readUTF());
 			case TransferCode.CHAT_FAIL:
-				bytes = new byte[RoomCreateMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new ChatFailMessage(bytes);
-				
+				return new ChatFailMessage(dis.readByte());
 //			case TransferCode.SEND_IMAGE:
-//				bytes = new byte[SendImageMessage.MSG_SIZE];
-//				bytes[0] = (byte) b;
-//				is.read(bytes, 1, bytes.length-1);
-//				return new SendImageMessage(bytes);
-				
+//				return new SendImageMessage(dis.readUTF(), ...);
 			case TransferCode.USER_NICK_CHANGE:
-				bytes = new byte[UserNickChangeMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new UserNickChangeMessage(bytes);
-				
+				return new UserNickChangeMessage(dis.readUTF(), dis.readUTF());
 			case TransferCode.USER_NICK_CHANGE_SUC:
-				bytes = new byte[RoomCreateMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new UserNickChangeSucMessage(bytes);
-				
+				return new UserNickChangeSucMessage();
 			case TransferCode.USER_NICK_CHANGE_FAIL:
-				bytes = new byte[UserNickChangeFailMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new UserNickChangeFailMessage(bytes);
-				
+				return new UserNickChangeFailMessage(dis.readByte());
 			case TransferCode.USER_PROFILE_CHANGE:
-				bytes = new byte[UserProfileChangeMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new UserProfileChangeMessage(bytes);
-				
+				return new UserProfileChangeMessage(dis.readUTF(), dis.readUTF());
 			case TransferCode.USER_PROFILE_CHANGE_SUC:
-				bytes = new byte[UserProfileChangeSucMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new UserProfileChangeSucMessage(bytes);
-				
+				return new UserProfileChangeSucMessage();
 			case TransferCode.USER_PROFILE_CHANGE_FAIL:
-				bytes = new byte[UserProfileChangeFailMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new UserProfileChangeFailMessage(bytes);
-				
+				return new UserProfileChangeFailMessage(dis.readByte());
 			case TransferCode.ROOM_CREATE:
-				bytes = new byte[RoomCreateMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new RoomCreateMessage(bytes);				
-
+				return new RoomCreateMessage(dis.readUTF());
 			case TransferCode.ROOM_CREATE_SUC:
-				bytes = new byte[RoomCreateSucMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new RoomCreateSucMessage(bytes);
-
+				return new RoomCreateSucMessage();
 			case TransferCode.ROOM_CREATE_FAIL:
-				bytes = new byte[RoomCreateFailMessage.MSG_SIZE];
-				bytes[0] = (byte) b;
-				is.read(bytes, 1, bytes.length-1);
-				return new RoomCreateFailMessage(bytes);
-				
+				return new RoomCreateFailMessage(dis.readByte());
 			default:
 				return null;
 			}
@@ -178,24 +75,24 @@ public abstract class Message {
 		return null;
 	}
 	
-	public void send(OutputStream os) throws IOException {
-		os.write(bytes);
-		os.flush();
+	protected void send(DataOutputStream dos) throws IOException {
+		dos.write(this.type);
+		// write more data...
 	}
 	
 	public void send(Socket socket) throws IOException {
-		this.send(socket.getOutputStream());
+		this.send(new DataOutputStream(socket.getOutputStream()));
 	}
 }
 
 interface Broadcastable {
-	public void send(OutputStream os) throws IOException;
+	public void send(DataOutputStream os) throws IOException;
 	public default void broadcast(
-			HashMap<Integer, HashMap<String, OutputStream>> hm,
+			HashMap<Integer, HashMap<String, DataOutputStream>> hm,
 			int roomid
 			) throws Exception
 	{
-		HashMap<String, OutputStream> room = null; 
+		HashMap<String, DataOutputStream> room = null; 
 		for (int id : hm.keySet()) {
 			if (id == roomid) {
 				room = hm.get(id);

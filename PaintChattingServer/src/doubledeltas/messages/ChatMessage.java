@@ -1,45 +1,29 @@
 package doubledeltas.messages;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import doubledeltas.environments.TransferCode;
-import doubledeltas.utils.ByteStringReader;
 
 public class ChatMessage extends Message
 implements ServerRecievable
 {
-	static final int MSG_SIZE = 1+4+45+1024;
 	private int roomID;
 	private String userID, text;
 	
-	public ChatMessage(byte[] bytes) {
-		if (bytes[0] != TransferCode.CHAT) return;
-		if (bytes.length < MSG_SIZE) return;
-		
-		this.bytes = new byte[MSG_SIZE];
-		for (int i=0; i<MSG_SIZE; i++)
-			this.bytes[i] = bytes[i];
-		
-		ByteStringReader bsr = new ByteStringReader(this.bytes);
-		bsr.setCursor(1);
-		this.roomID = bsr.readInInteger();
-		this.userID = bsr.readInString(45);
-		this.text = bsr.readInString(1024);
-	}
-	
 	public ChatMessage(int roomID, String userID, String text) {
-		bytes = new byte[MSG_SIZE];
-		ByteStringReader bsr = new ByteStringReader(bytes);
-		
-		bytes[0] = TransferCode.CHAT;
-		
-		bsr.setCursor(1);
-		bsr.writeInteger(roomID);
-		bsr.writeString(userID, false);
-		bsr.moveCursor(45);
-		bsr.writeString(text, false);
-		
+		this.type = TransferCode.CHAT;
 		this.roomID = roomID;
 		this.userID = new String(userID);
 		this.text = new String(text);
+	}
+
+	@Override
+	public void send(DataOutputStream dos) throws IOException {
+		super.send(dos);
+		dos.write(roomID);
+		dos.writeUTF(userID);
+		dos.writeUTF(text);
 	}
 	
 	public int getRoomID() { return roomID; }

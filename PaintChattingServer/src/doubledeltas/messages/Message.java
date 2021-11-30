@@ -5,8 +5,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
 
-import doubledeltas.environments.TransferCode;
-
 public abstract class Message {
 	protected byte type;
 	

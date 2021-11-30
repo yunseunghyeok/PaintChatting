@@ -2,7 +2,7 @@
  *  Authored by DoubleDeltas
  */
 
-package doubledeltas.environments;
+package doubledeltas.messages;
 
 public class TransferCode {
 	public static final byte

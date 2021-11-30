@@ -3,8 +3,6 @@ package doubledeltas.messages;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import doubledeltas.environments.TransferCode;
-
 public class UserNickChangeFailMessage extends Message
 implements ClientRecievable
 {

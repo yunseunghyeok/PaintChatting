@@ -2,6 +2,7 @@
 //hakfe
 package hakfe;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -10,6 +11,10 @@ import java.awt.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.*;
 import javax.swing.event.*;
 
@@ -47,7 +52,7 @@ public class MyInterface extends JFrame {
 
 	int sizeX;
 	int sizeY;
-
+	int imgCount = 1;
 	int oldX, oldY;
 	int curX, curY;
 	Vector<JButton> addChattingRoomButtonVec = new Vector<JButton>();
@@ -127,13 +132,13 @@ public class MyInterface extends JFrame {
 		c.add(ChattingRoomName);
 		ChattingRoomName.setBackground(new Color(107, 107, 107));
 		ChattingRoomName.setVisible(true);
-		
+
 		String roomname = ""; // db에서 가져와야 함
 		RoomName = new JLabel("방 이름이 여기 나옵니다.");
 		ChattingRoomName.add(RoomName);
 		RoomName.setBounds(35, 20, 200, 30);
 		RoomName.setVisible(true);
-		
+
 		UserList = new JPanel();
 		UserList.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 		UserList.setLayout(null);
@@ -226,7 +231,7 @@ public class MyInterface extends JFrame {
 			ChattingDisplayByMe.setLocation(600, 0);
 			c.add(ChattingDisplayByMe);
 			ChattingDisplayByMe.setBackground(new Color(130, 130, 130));
-			
+
 			scrollPane = new JScrollPane(ChattingDisplayByMe, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			scrollPane.setBounds(600, 0, sizeX - 1250, sizeY - 200);
@@ -234,10 +239,10 @@ public class MyInterface extends JFrame {
 			c.add(scrollPane);
 		}
 	}
-	
+
 	class MyCanvas extends JPanel {
 		public MyCanvas() {
-			Canvas = new JPanel();
+			Canvas = new JPanel(null);
 			Canvas.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 			c.add(Canvas);
 			Canvas.setSize(650, 600);
@@ -247,31 +252,28 @@ public class MyInterface extends JFrame {
 			Canvas.addMouseListener(new CanvasMouseListener());
 			Canvas.addMouseMotionListener(new CanvasMouseMotionListener());
 			gp = Canvas.getGraphics();
-			repaint();
-
+		}
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			
 		}
 
-		public void panelToImage() {
+		class CanvasMouseListener extends MouseAdapter {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				super.mousePressed(e);
+				oldX = e.getX();
+				oldY = e.getY();
+				tmp.add(new point(oldX, oldY));
+				gp.setColor(currentColor);
+			}
 
-		}
-	}
-
-	class CanvasMouseListener extends MouseAdapter {
-		@Override
-		public void mousePressed(MouseEvent e) {
-			super.mousePressed(e);
-			oldX = e.getX();
-			oldY = e.getY();
-			tmp.add(new point(oldX, oldY));
-			gp.setColor(currentColor);
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			super.mouseReleased(e);
-			list.add(tmp);
-			tmp = new Vector<point>();
-
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				super.mouseReleased(e);
+				list.add(tmp);
+				tmp = new Vector<point>();
+			}
 		}
 	}
 
@@ -331,24 +333,45 @@ public class MyInterface extends JFrame {
 					list.clear();
 				}
 			});
-
 			sendImageButton = new JButton("그림 전송");
 			SelectingColor.add(sendImageButton);
 			sendImageButton.setBounds(370, 20, 100, 30);
 			sendImageButton.setVisible(true);
-
 			sendImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JPanel gpPanel = new JPanel();
-					gpPanel.setBackground(Color.white);
-					gpPanel.setPreferredSize(new Dimension(100, 100));
+					ImageIcon Updateicon = null;
+					// BufferedImage
+					Rectangle screenRect = 
+							new Rectangle(Canvas.getX(), Canvas.getY()+20, Canvas.getWidth() - 30, Canvas.getHeight());
+					BufferedImage image = null;
+					try {
+						image  = new Robot().createScreenCapture(screenRect);
+					}
+					catch (AWTException e1){
+						e1.printStackTrace();
+					}
+					try {
+						ImageIO.write(image, "png", new File("C:/javaPanelToImage/image" + imgCount + ".png"));
+						ImageIcon icon = new ImageIcon("C:/javaPanelToImage/image" + imgCount + ".png");
+						Image img = icon.getImage();
+						Image updateImg = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+						Updateicon = new ImageIcon(updateImg);
+						
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					
+					JLabel gpLabel = new JLabel(Updateicon);
+					gpLabel.setPreferredSize(new Dimension(100, 100));
 					JLabel st = new JLabel();
-					gbcFormByMe(gpPanel, 0, displayCntByMe, 1, 1);
-					displayCntByMe ++;
+					gbcFormByMe(gpLabel, 0, displayCntByMe, 1, 1);
+					displayCntByMe++;
 					st.setPreferredSize(new Dimension(20, 20));
 					gbcFormByMe(st, 0, displayCntByMe, 1, 1);
-					displayCntByMe ++;
+					displayCntByMe++;
 					scrollPane.updateUI();
+					
+					imgCount++;
 				}
 			});
 		}
@@ -395,7 +418,6 @@ public class MyInterface extends JFrame {
 
 			settingPenThickNess.setVisible(true);
 			settingPenThickNess.addChangeListener(new settingPenThickNessListener());
-
 		}
 
 		class settingPenThickNessListener implements ChangeListener {

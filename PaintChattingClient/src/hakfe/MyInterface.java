@@ -1,5 +1,5 @@
-//11.30 수정
-//hakfe
+//12 . 01 . Wed 수정
+//hakfe. . .
 package hakfe;
 
 import javax.imageio.ImageIO;
@@ -49,7 +49,9 @@ public class MyInterface extends JFrame {
 	ImageIcon menuImage = new ImageIcon("img/메뉴.png");
 	ImageIcon changeColorImage = new ImageIcon("img/색 선택.png");
 	ImageIcon sendImage = new ImageIcon("img/전송.png");
-
+	
+	//Font font = new Font();
+	
 	int sizeX;
 	int sizeY;
 	int imgCount = 1;
@@ -141,13 +143,18 @@ public class MyInterface extends JFrame {
 
 		UserList = new JPanel();
 		UserList.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
-		UserList.setLayout(null);
+		UserList.setLayout(new FlowLayout());
 		UserList.setSize(200, 730);
 		UserList.setLocation(100, 70);
 		c.add(UserList);
 		UserList.setBackground(new Color(107, 107, 107));
 		UserList.setVisible(true);
-
+		
+		/*
+		 *  db 통해여 유저 목록 출력해야함.
+		 * 
+		 * */
+		
 		new ChattingDisplayPanelByMe();
 		new ChattingDisplayPanelByAnother();
 
@@ -221,7 +228,6 @@ public class MyInterface extends JFrame {
 			ChattingDisplayByAnother.setBackground(new Color(130, 130, 130));
 		}
 	}
-
 	class ChattingDisplayPanelByMe extends JPanel {
 		public ChattingDisplayPanelByMe() {
 			ChattingDisplayByMe = new JPanel();
@@ -255,7 +261,6 @@ public class MyInterface extends JFrame {
 		}
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			
 		}
 
 		class CanvasMouseListener extends MouseAdapter {
@@ -342,7 +347,8 @@ public class MyInterface extends JFrame {
 					ImageIcon Updateicon = null;
 					// BufferedImage
 					Rectangle screenRect = 
-							new Rectangle(Canvas.getX(), Canvas.getY()+20, Canvas.getWidth() - 30, Canvas.getHeight());
+							new Rectangle(Canvas.getX(), Canvas.getY()+20, 
+									Canvas.getWidth() - 30, Canvas.getHeight());
 					BufferedImage image = null;
 					try {
 						image  = new Robot().createScreenCapture(screenRect);
@@ -351,10 +357,10 @@ public class MyInterface extends JFrame {
 						e1.printStackTrace();
 					}
 					try {
-						ImageIO.write(image, "png", new File("C:/javaPanelToImage/image" + imgCount + ".png"));
-						ImageIcon icon = new ImageIcon("C:/javaPanelToImage/image" + imgCount + ".png");
-						Image img = icon.getImage();
-						Image updateImg = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+					//	ImageIO.write(image, "png", new File("C:/javaPanelToImage/image" + imgCount + ".png"));
+					//	ImageIcon icon = new ImageIcon("C:/javaPanelToImage/image" + imgCount + ".png");
+					//	Image img = icon.getImage();
+						Image updateImg = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
 						Updateicon = new ImageIcon(updateImg);
 						
 					} catch (Exception ex) {
@@ -490,9 +496,10 @@ public class MyInterface extends JFrame {
 		gbc.gridheight = h;
 		ChattingDisplayByMe.add(c, gbc);
 	}
-
+	
 	public static void main(String[] args) {
 		new MyInterface();
+		new LoginFrame();
 	}
 
 }

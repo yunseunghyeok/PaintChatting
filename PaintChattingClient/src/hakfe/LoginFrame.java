@@ -86,14 +86,13 @@ public class LoginFrame extends JFrame {
 			 * 사용자에게 존재하지 않는 입력값이라고 표시해주기 위함임.
 			 * 아이디와 비밀번호 구분 하지 않음. 
 			 */
-			MyInterface ddd = new MyInterface();
 			loginFrame.dispose();
 		}
 	}
 	class loginCanleButtonListener implements ActionListener { 
 		// 취소 버튼 액션 리스너 클래스
 		public void actionPerformed(ActionEvent e) {
-			loginFrame.dispose();
+			System.exit(0);
 		}
 	}
 	class loginSignUpButtonListener implements ActionListener { 

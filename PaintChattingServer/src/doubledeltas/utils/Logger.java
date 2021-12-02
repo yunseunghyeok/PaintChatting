@@ -23,7 +23,7 @@ public class Logger {
      */
     public static void l(String txt) {
         String formattedNow = LocalDateTime.now().format(
-                DateTimeFormatter.ofPattern("MM/dd hh:mm:ss")
+                DateTimeFormatter.ofPattern("MM/dd HH:mm:ss")
         );
         System.out.println("[" + formattedNow + "] " + txt);
     }
@@ -34,7 +34,7 @@ public class Logger {
      */
     public static void l(String[] txts) {
         String formattedNow = LocalDateTime.now().format(
-                DateTimeFormatter.ofPattern("MM/dd hh:mm:ss")
+                DateTimeFormatter.ofPattern("MM/dd HH:mm:ss")
         );
         System.out.println("[" + formattedNow + "] ");
         for(String s: txts) {

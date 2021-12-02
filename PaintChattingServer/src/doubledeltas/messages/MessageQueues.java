@@ -1,15 +1,30 @@
 package doubledeltas.messages;
 
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import doubledeltas.environments.Environment;
+
+/**
+ * <code>DataInputStream</code>으로부터 메시지를 입력받아 타입 별로 큐잉(Queueing)하는 객체
+ * @author doubledeltas
+ * @see doubledeltas.messages.Message
+ */
 public class MessageQueues implements Runnable {
 	DataInputStream dis;
 	HashMap<Byte, LinkedList<Message>> hm;
 	
+	/**
+	 * <code>DataInputStream</code>으로부터 메시지를 입력받아 타입 별로 큐잉(Queueing)하는 객체
+	 * @param dis 메시지 데이터를 입력받은 <code>DataInputStream</code> 객체
+	 * @see doubledeltas.messages.Message
+	 */
 	public MessageQueues(DataInputStream dis) {
 		this.hm = new HashMap<Byte, LinkedList<Message>>();
 		this.dis = dis;
@@ -76,9 +91,25 @@ public class MessageQueues implements Runnable {
 				case TransferCode.CHAT_FAIL:
 					msg = new ChatFailMessage(dis.readByte());
 					break;
-//				case TransferCode.SEND_IMAGE:
-//					msg = new SendImageMessage(dis.readUTF(), ...);
-//					break;
+				case TransferCode.SEND_IMAGE:
+					String fileName = dis.readUTF();
+					long fileLength = dis.readLong();
+					String filePath = Environment.FILE_DIR + "\\" + fileName;
+					File file = new File(filePath);
+					FileOutputStream fos = new FileOutputStream(file);
+					byte[] buf;
+					long len;
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+					while ((len = Math.min(4096L, fileLength)) > 0) {
+						buf = dis.readNBytes((int)len);
+						fileLength -= len;
+						fos.write(buf);
+					}
+					fos.close();
+					msg = new SendImageMessage(fileName, file);
+					break;
 				case TransferCode.USER_NICK_CHANGE:
 					msg = new UserNickChangeMessage(dis.readUTF(), dis.readUTF());
 					break;
@@ -120,8 +151,12 @@ public class MessageQueues implements Runnable {
 		}
 	}
 	
-	/*
+	/**
 	 * 메시지 타입이 <code>type</code>인 메시지의 입력을 기다림
+	 * @param type 메시지 타입
+	 * @param timeout 대기 제한시간
+	 * @return 전송받은 메시지, 제한시간 초과 시 <code>null</code>
+	 * @see doubledeltas.messages.Message
 	 */
 	public Message waitForMessage(byte type, long timeout) {
 		long startTime = System.currentTimeMillis();
@@ -137,11 +172,23 @@ public class MessageQueues implements Runnable {
 				return null;
 		}
 	}
-	
+
+	/**
+	 * 메시지 타입이 <code>type</code>인 메시지의 입력을 기다림
+	 * @param type 메시지 타입
+	 * @return 전송받은 메시지
+	 * @see doubledeltas.messages.Message
+	 */
 	public Message waitForMessage(byte type) {
 		return waitForMessage(type, Long.MAX_VALUE);
 	}
-	
+
+	/**
+	 * 아무 메시지나 입력되기를 제한없이 기다림
+	 * @param timeout 대기 제한시간
+	 * @return 전송받은 메시지, 제한시간 초과 시 <code>null</code>
+	 * @see doubledeltas.messages.Message
+	 */
 	public Message waitForMessage(long timeout) {
 		long startTime = System.currentTimeMillis();
 		LinkedList<Message> queue;
@@ -158,7 +205,45 @@ public class MessageQueues implements Runnable {
 		}
 	}
 	
+	/**
+	 * 아무 메시지나 입력되기를 제한없이 기다림
+	 * @return 전송받은 메시지
+	 * @see doubledeltas.messages.Message
+	 */
 	public Message waitForMessage() {
 		return waitForMessage(Long.MAX_VALUE);
+	}
+	
+	/**
+	 * types의 원소 중 하나를 타입으로 하는 메시지가 입력되기 기다림
+	 * @param types 메시지 타입들
+	 * @param timeout 대기 제한시간
+	 * @return 전송받은 메시지, 제한시간 초과시 <code>null</code>
+	 * @see doubledeltas.messages.Message
+	 */
+	public Message waitForMessage(byte[] types, long timeout) {
+		long startTime = System.currentTimeMillis();
+		LinkedList<Message> queue;
+		while (true) {
+			synchronized(hm) {
+				for (byte type: types) {
+					queue = hm.get(type);
+					if (queue == null) continue;
+					if (!queue.isEmpty())
+						return queue.poll();
+				}
+			}
+			if (System.currentTimeMillis() - startTime > timeout)
+				return null;
+		}
+	}
+
+	/**
+	 * <code>types</code>의 원소 중 하나를 타입으로 하는 메시지가 입력되기를 제한없이 기다림
+	 * @return 전송받은 메시지
+	 * @see doubledeltas.messages.Message
+	 */
+	public Message waitForMessage(byte[] types) {
+		return waitForMessage(types, Long.MAX_VALUE);
 	}
 }

@@ -34,7 +34,7 @@ ROOM_SOMEONE_JOINED		0x0B	누군가 방 입장함	S -> C [*]	UserNick(S)
 CHAT				0x0C	채팅 처리 요청		C -> S		RoomID(I) UserID(S) Text(S)
 CHAT_SUC			0x0D	채팅 처리 성공		C -> S [*]	RoomID(I) UserNick(S) Text(S) Font(S) ImgFileName(S)
 CHAT_FAIL			0x0E	채팅 처리 실패		C -> S		Reason(B)
-SEND_IMAGE			0x0F	이미지 전송		Both [*]	FileName(S) Data(10MiB)
+SEND_IMAGE			0x0F	이미지 전송		Both [*]	FileName(S) FileSize(I) FIS/FOS
 
 USER_NICK_CHANGE		0x10	유저 닉네임 변경 요청	C -> S		UserID(S) NewNick(S)
 USER_NICK_CHANGE_SUC		0x11	유저 닉네임 변경 성공	S -> C		-
@@ -46,3 +46,6 @@ ROOM_CREATE			0x16	방 생성 요청		C -> S		UserID(S)
 ROOM_CREATE_SUC			0x17	방 생성 성공		S -> C		RoomID(S)
 
 ROOM_CREATE_FAIL		0x18	방 생성 실패		S -> C		Reason(B)
+USER_FONT_CHANGE		0x19	유저 폰트 변경 요청	C -> S		UserID(S) NewFont(S)
+USER_FONT_CHANGE_SUC		0x1A	유저 폰트 변경 성공	C -> S		-
+USER_FONT_CHANGE_FAIL		0x1B	유저 폰트 변경 실패	C -> S		Reason(B)

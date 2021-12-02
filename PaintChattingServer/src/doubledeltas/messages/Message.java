@@ -14,7 +14,7 @@ public abstract class Message {
 	}
 	
 	protected void send(DataOutputStream dos) throws IOException {
-		dos.write(this.type);
+		dos.writeByte(this.type);
 		// write more data...
 	}
 	

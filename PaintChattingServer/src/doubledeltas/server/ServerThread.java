@@ -22,6 +22,7 @@ public class ServerThread extends Thread {
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	private MessageQueues qs;
+	private boolean isRunning;
 	
 	public ServerThread(MysqlConnector con, Socket socket,
 			HashMap<Integer, HashMap<String, DataOutputStream>> hm) {
@@ -36,6 +37,7 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 			return;
 		}
+		this.isRunning = true;
 	}
 	
 	@Override
@@ -44,18 +46,18 @@ public class ServerThread extends Thread {
 		
 		Message msg = null;
 		try {
-			while (true) {
+			while (isRunning) {
 				msg = qs.waitForMessage();
 
-				if (msg instanceof LoginMessage) handle((LoginMessage)msg);
-				//else
-					//Logger.l(String.format("클라이언트 [%s]의 빈 메시지 받음.", socket.getInetAddress().toString()));
+				if (msg instanceof LoginMessage)			handle((LoginMessage)msg);
+				if (msg instanceof RegisterMessage)			handle((RegisterMessage)msg);
+				if (msg instanceof ConnectionCutMessage)	handle((ConnectionCutMessage)msg);
 				
-				if (msg instanceof ConnectionCutMessage) {
-					Logger.l(String.format("클라이언트 [%s]가 접속을 종료함.", socket.getInetAddress().toString()));
-					break;
-				}
+				if (msg instanceof SendImageMessage)		handle((SendImageMessage)msg);
 			}
+
+	    	Logger.l(String.format("클라이언트 [%s]와 연결 종료.", socket.getInetAddress().toString()));
+	    	this.interrupt();	// END
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -64,31 +66,25 @@ public class ServerThread extends Thread {
 			this.interrupt();
 		}
 	}
-	
-	private void handle(LoginMessage msg) {
-		Logger.l(String.format("클라이언트 [%s]의 LoginMessage 받음.", socket.getInetAddress().toString()));
-		Logger.l(String.format("id: %s, pw: %s", msg.getID(), msg.getPassword()));
-	}
-	
+
 	/**
-     * 유저가 로그인을 시도
-     * @param id
-     * @param pw
+     * 로그인을 시도, 실패 시 <code>LoginFailMessage</code>를 보내고, 성공 시 <code>LoginSucMessage</code>를 보낸다.
+     * @param msg 로그인 매개변수가 포함된 LoginMessage 객체
      */
-    private void askLogin(String id, String pw) {
-        if (!doesIDexist(id)) {
-            // send "LOGIN_FAIL 1" command to client socket
-            Logger.l(String.format("%s 로그인 실패.", id));
+    private void handle(LoginMessage msg) throws IOException {
+    	Logger.l(String.format("클라이언트 [%s]로부터 로그인 시도", socket.getInetAddress().toString()));
+        if (!doesIDexist(msg.getID())) {
+        	new LoginFailMessage(LoginFailMessage.NO_ID_FOUND).send(dos);
+            Logger.l(String.format("%s 로그인 실패: ID 미발견", msg.getID()));
             return;
         }
-        if (!isPWcorrect(id, pw)) {
-            // send "LOGIN_FAIL 2" command to client socket
-            Logger.l(String.format("%s 비밀번호 불일치.", id));
+        if (!isPWcorrect(msg.getID(), msg.getPassword())) {
+        	new LoginFailMessage(LoginFailMessage.PASSWORD_WRONG).send(dos);
+            Logger.l(String.format("%s 로그인 실패: 비밀번호 불일치.", msg.getID()));
             return;
         }
-        // send "LOGIN_SUC" command to client socket
-        Logger.l(String.format("%s 로그인 성공.", id));
-        // sendUpdateQuery(유저의 온라인 상태를 TRUE로)
+        new LoginSucMessage().send(dos);
+        Logger.l(String.format("%s 로그인 성공.", msg.getID()));
         return;
     }
 
@@ -98,27 +94,27 @@ public class ServerThread extends Thread {
      * @param pw
      * @param nick
      */
-    private void askRegistration(String id, String pw, String nick) {
-        if (doesIDexist(id)) {
-            // send "REGISTER_FAIL 1" command to client socket
-            Logger.l(String.format("%s 회원가입 실패. ID 중복.", id));
+    private void handle(RegisterMessage msg) throws IOException {
+    	Logger.l(String.format("클라이언트 [%s]로부터 회원가입 시도", socket.getInetAddress().toString()));
+        if (doesIDexist(msg.getID())) {
+            new RegisterFailMessage(RegisterFailMessage.DUPLICATED_ID).send(dos);
+            Logger.l(String.format("%s 회원가입 실패: ID 중복.", msg.getID()));
             return;
         }
-        // send "REGISTER_SUC" command to client socket
-        con.sendUpdateQuery(
-        		"INSERT INTO user VALUES('%s', '%s', '%s', 0, '굴림체');".formatted(
-        				id, pw, nick)
-        		);
+        con.sendUpdateQuery(String.format(
+        		"INSERT INTO user VALUES('%s', '%s', '%s', 0, '굴림체');",
+        				msg.getID(), msg.getPassword(), msg.getNickname()
+        		));
 
-        Logger.l(String.format("%s 회원가입 성공.", id));
-        askLogin(id, pw);    // 회원가입된 정보로 로그인
+        Logger.l(String.format("%s 회원가입 성공.", msg.getID()));
+        handle(new LoginMessage(msg.getID(), msg.getPassword()));    // 회원가입된 정보로 로그인
         return;
     }
     
     private boolean doesIDexist(String id) {
         try {
             ResultSet rs = con.sendQuery(String.format(
-            		"SELECT id FROM User WHERE id='%s'",
+            		"SELECT id FROM user WHERE id='%s'",
             		id));
             return rs.next();
         }
@@ -131,7 +127,7 @@ public class ServerThread extends Thread {
     private boolean isPWcorrect(String id, String pw) {
         try {
             ResultSet rs = con.sendQuery(String.format(
-                    "SELECT pw FROM (SELECT id FROM User WHERE id=%s) WHERE pw=%s",
+            		"SELECT id FROM User WHERE id='%s' AND pw='%s'",
                     id, pw)
             );
             return rs.next();
@@ -145,11 +141,12 @@ public class ServerThread extends Thread {
     /**
      * 유저가 연결을 종료함. 클라이언트가 종료되었을 때의 처리
      */
-    private void askConnectionCut() {
+    private void handle(ConnectionCutMessage msg) {
+    	Logger.l(String.format("클라이언트 [%s]가 연결 종료 요청", socket.getInetAddress().toString()));
 		for (int roomid : hm.keySet()) {
 			HashMap<String, DataOutputStream> room = hm.get(roomid);
-    		for (DataOutputStream dos : room.values()) {
-    			if (dos == this.dos) room.remove(dos);
+    		for (String id : room.keySet()) {
+    			if (room.get(id) == this.dos) room.remove(id);
     		}
 		}
 		try {
@@ -159,33 +156,55 @@ public class ServerThread extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    	this.interrupt();	// END
+		isRunning = false;	// whlie-loop 종료
     }
+    
+    /**
+     * 채팅방을 생성, 8자리의 무작위 숫자를 ID로 하여 채팅방을 생성한다.
+     */
+    private void handle(RoomCreateMessage msg) {
+    	Logger.l(String.format("클라이언트 [%s]로부터 채팅방 생성 요청", socket.getInetAddress().toString()));
+    	int roomID;
+    	do {
+    		roomID = (int)(Math.random() * (100_000_000 - 10_000_000)) + 10_000_000;
+    	} while (doesRoomIDExist(roomID));
+
+        con.sendUpdateQuery(String.format(
+        		"INSERT INTO chatroom VALUES('%s', '%s', '%s', NULL);",
+        				roomID, "채팅방 #"+roomID
+        		));
+    }
+    
+    private boolean doesRoomIDExist(int roomID) {
+        try {
+            ResultSet rs = con.sendQuery(String.format(
+            		"SELECT ChatID FROM chatroom WHERE id='%d'",
+                    roomID)
+            );
+            return rs.next();
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
     
     /**
      * 유저가 채팅방에 입장하려 함
      * @param id
      * @param roomid
      */
-    private void askRoomEnter(String id, int roomid) {
+    private void handle(RoomEnterMessage msg) {
+    	Logger.l(String.format("클라이언트 [%s]로부터 채팅방 입장 요청", socket.getInetAddress().toString()));
     	
     }
     
-    /**
-     * 유저가 채팅을 전송함
-     * @param id 유저 ID
-     * @param roomid 채팅방 코드
-     * @param msg 메시지
-     * @param imgid 이미지 파일 이름(ID)
-     */
-    private void askChat(String id, int roomid, String msg, int imgid) {
-    	
+    private void handle(SendImageMessage msg) {
+    	Logger.l(String.format("클라이언트 [%s]가 이미지 전송 성공: %s",
+    			socket.getInetAddress().toString(), msg.getFileName()
+    			));
     }
-    /*
-    private void askSendImage(...) {
-    
-	}
-    //*/
    
     /**
      * 유저가 닉네임을 변경하려 시도함

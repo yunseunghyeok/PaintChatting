@@ -5,7 +5,6 @@
     <fullyQualifiedTypeName name="doubledeltas.messages.LoginFailReason"/>
     <fullyQualifiedTypeName name="doubledeltas.messages.LoginFailMessage"/>
     <fullyQualifiedTypeName name="java.util.Arrays"/>
-    <fullyQualifiedTypeName name="java.io.File"/>
     <fullyQualifiedTypeName name="java.io.OutputStream"/>
     <fullyQualifiedTypeName name="java.io.IOException"/>
     <fullyQualifiedTypeName name="com.mysql.cj.protocol.Message"/>
@@ -24,4 +23,8 @@
     <fullyQualifiedTypeName name="java.util.LinkedList"/>
     <fullyQualifiedTypeName name="doubledeltas.messages.MessageQueues"/>
     <fullyQualifiedTypeName name="doubledeltas.messages.TransferCode"/>
+    <fullyQualifiedTypeName name="java.io.FileInputStream"/>
+    <fullyQualifiedTypeName name="java.io.File"/>
+    <fullyQualifiedTypeName name="doubledeltas.environments.Environment"/>
+    <fullyQualifiedTypeName name="java.io.FileOutputStream"/>
 </qualifiedTypeNameHistroy>

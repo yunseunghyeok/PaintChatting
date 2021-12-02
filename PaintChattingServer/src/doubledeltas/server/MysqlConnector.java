@@ -34,7 +34,7 @@ public class MysqlConnector {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL
             conn = DriverManager.getConnection(
-                    "jdbc:mysql://" + address + ":" + port,
+                    "jdbc:mysql://" + address + ":" + port + "/paintchattingdb",
                     dbUser, dbPassword);
             Logger.l("MysqlConnector 연결 성공!");
         } catch (ClassNotFoundException e) {

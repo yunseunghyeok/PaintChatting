@@ -104,6 +104,7 @@ public class MessageQueues implements Runnable {
 					}
 					while ((len = Math.min(4096L, fileLength)) > 0) {
 						buf = dis.readNBytes((int)len);
+						System.out.println(fileLength);
 						fileLength -= len;
 						fos.write(buf);
 					}
@@ -139,12 +140,12 @@ public class MessageQueues implements Runnable {
 					break;
 				default:
 					break;
-				}
+				} // switch-end
 				enqueue(b, msg);
 			}
 		}
 		catch (SocketException ex) {
-			msg = new ConnectionCutMessage();
+			enqueue(TransferCode.CONNECTION_CUT, new ConnectionCutMessage());
 		}
 		catch (IOException ex) {
 			ex.printStackTrace();
@@ -196,8 +197,10 @@ public class MessageQueues implements Runnable {
 			synchronized (hm) {
 				for (byte b: hm.keySet()) {
 					queue = hm.get(b);
-					if (!queue.isEmpty())
+					if (!queue.isEmpty()) {
+						System.out.println("asdf" + b);
 						return queue.poll();
+					}
 				}
 			}
 			if (System.currentTimeMillis() - startTime > timeout)

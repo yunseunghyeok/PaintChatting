@@ -205,24 +205,6 @@ public class ServerThread extends Thread {
     			socket.getInetAddress().toString(), msg.getFileName()
     			));
     }
-   
-    /**
-     * 유저가 닉네임을 변경하려 시도함
-     * @param id
-     * @param nick
-     */
-    private void askUserNickChange(String id, String nick) {
-    
-    }    
-
-    /**
-     * 유저가 프로필 사진을 변경하려고 시도함
-     * @param id
-     * @param imgid
-     */
-    private void askUserProfileChange(String id, int imgid) {
-    	
-    }
     
     
 } // ServerThread END

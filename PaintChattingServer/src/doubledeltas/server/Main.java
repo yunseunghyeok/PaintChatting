@@ -5,6 +5,7 @@ import doubledeltas.environments.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Vector;
@@ -35,6 +36,23 @@ public class Main {
 			
 			Socket socket;
 			
+			/////////////// 채팅방 불러오기 ////////////////
+			int roomid;
+			String userid;
+			ResultSet rs;
+			int cnt = 0;
+			rs = con.sendQuery(
+					"SELECT id FROM chatroom");
+			while (rs.next()) {
+				roomid = rs.getInt("id");
+				hm.put(roomid, new HashMap<String, DataOutputStream>());
+				cnt++;
+			}
+			Logger.l(String.format("%d개의 채팅방 로딩 성공!", cnt));
+
+			Logger.l("로딩 완료!");
+			
+			//////////// server thread 생성 ////////////
 			while (true) {
 				// 연결 완료 후 진행
 				socket = server.accept();
@@ -43,6 +61,7 @@ public class Main {
 					th.start();
 				}
 			}
+			//////////////////////////////////////////
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

@@ -33,8 +33,8 @@ ROOM_ENTER_SUC			0x09	방 입장 성공		S -> C		-
 ROOM_ENTER_FAIL			0x0A	방 입장 실패		S -> C		Reason(B)
 ROOM_SOMEONE_JOINED		0x0B	누군가 방 입장함	S -> C [*]	UserNick(S)
 CHAT				0x0C	채팅 처리 요청		C -> S		RoomID(I) UserID(S) Text(S)
-CHAT_SUC			0x0D	채팅 처리 성공		C -> S [*]	RoomID(I) UserNick(S) Text(S) Font(S) ImgFileName(S)
-CHAT_FAIL			0x0E	채팅 처리 실패		C -> S		Reason(B)
+CHAT_SUC			0x0D	채팅 처리 성공		S -> C [*]	RoomID(I) UserNick(S) Text(S) Font(S) ImgFileName(S)
+CHAT_FAIL			0x0E	채팅 처리 실패		S -> C		Reason(B)
 SEND_IMAGE			0x0F	이미지 전송		Both [*]	FileName(S) FileSize(I) FIS/FOS
 
 USER_NICK_CHANGE		0x10	유저 닉네임 변경 요청	C -> S		UserID(S) NewNick(S)

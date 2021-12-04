@@ -3,16 +3,16 @@ package doubledeltas.messages;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class ChatFailMessage extends Message
+public class UserFontChangeFailMessage extends Message
 implements ClientRecievable
 {
 	public static final byte
-	UNKNOWN			= 0;
+	UNKNOWN = 0x00;
 	
 	private byte reason;
 	
-	public ChatFailMessage(byte reason) {
-		this.type = TransferCode.CHAT_FAIL;
+	public UserFontChangeFailMessage(byte reason) {
+		this.type = TransferCode.USER_FONT_CHANGE_FAIL;
 		this.reason = reason;
 	}
 	

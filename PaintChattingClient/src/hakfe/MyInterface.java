@@ -26,6 +26,8 @@ import doubledeltas.environments.*;
 import doubledeltas.messages.*;
 public class MyInterface extends JFrame {
 	
+	String UserID, UserNick, Font, IgmFileName, Text;
+	
 	Socket socket;
 	DataInputStream dis;
 	DataOutputStream dos;
@@ -56,7 +58,7 @@ public class MyInterface extends JFrame {
 	JTextArea ChattingSendArea;
 
 	JScrollPane roomScroll;
-	JScrollPane scrollPane;
+	JScrollPane scrollPane, scrollPane2;
 	ImageIcon menuImage = new ImageIcon("img/메뉴.png");
 	ImageIcon changeColorImage = new ImageIcon("img/색 선택.png");
 	ImageIcon sendImage = new ImageIcon("img/전송.png");
@@ -87,7 +89,7 @@ public class MyInterface extends JFrame {
 
 	public MyInterface() {
 		try {
-		socket = new Socket("서버주소", Environment.CLIENT_TO_SERVER_PORT);
+		socket = new Socket("112.162.166.138", Environment.CLIENT_TO_SERVER_PORT);
 		// 서버 주소는 그 컴에서 열면 localhost, 내 서버컴으로 연 서버는 서버 완성 후 알려드림
 		dis = new DataInputStream(socket.getInputStream());
 		dos = new DataOutputStream(socket.getOutputStream());
@@ -240,12 +242,19 @@ public class MyInterface extends JFrame {
 		public ChattingDisplayPanelByAnother() {
 			ChattingDisplayByAnother = new JPanel();
 			ChattingDisplayByAnother.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
-			ChattingDisplayByAnother.setLayout(new FlowLayout());
+			ChattingDisplayByAnother.setLayout(new GridBagLayout());
 			new JScrollPane(ChattingDisplayByAnother);
 			ChattingDisplayByAnother.setSize(sizeX - 1250, sizeY - 200);
 			ChattingDisplayByAnother.setLocation(300, 0);
 			c.add(ChattingDisplayByAnother);
 			ChattingDisplayByAnother.setBackground(new Color(130, 130, 130));
+			
+			scrollPane2 = new JScrollPane(ChattingDisplayByMe, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollPane2.setBounds(600, 0, sizeX - 1250, sizeY - 200);
+			c.add(scrollPane2);
+			
+			
 		}
 	}
 
@@ -494,7 +503,6 @@ public class MyInterface extends JFrame {
 		String text1 = "<html>";
 		String text2 = "</html>";
 		String brTag = "<br />";
-
 		public void actionPerformed(ActionEvent e) {
 			JLabel displayLabel;
 			String target = ChattingSendArea.getText();
@@ -502,6 +510,7 @@ public class MyInterface extends JFrame {
 
 			temp = temp.replaceAll("\\n", brTag);
 
+			//new ChatMessage()
 			displayLabel = new JLabel(temp);
 			displayLabel.setPreferredSize(new Dimension(250, 70));
 			// displayLabel.setFont(new Font());

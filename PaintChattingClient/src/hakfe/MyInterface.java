@@ -7,22 +7,23 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.*;
 import javax.swing.event.*;
-
 public class MyInterface extends JFrame {
-
+	
 	Container c;
-
+	JFrame mainFrame;
 	JPanel ChattingRoom;
 	JPanel ChattingRoomName;
 	JPanel UserList;
@@ -51,8 +52,6 @@ public class MyInterface extends JFrame {
 	ImageIcon changeColorImage = new ImageIcon("img/색 선택.png");
 	ImageIcon sendImage = new ImageIcon("img/전송.png");
 
-	// Font font = new Font();
-
 	int sizeX;
 	int sizeY;
 	int imgCount = 1;
@@ -78,19 +77,20 @@ public class MyInterface extends JFrame {
 	int penThickNess = 0;
 
 	public MyInterface() {
-		JFrame frame = new JFrame("PaintChatting");
+		
+		mainFrame = new JFrame("PaintChatting");
 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		c = frame.getContentPane();
-		frame.setVisible(true);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		c = mainFrame.getContentPane();
+		mainFrame.setVisible(true);
 		c.setLayout(null);
 		gbc.fill = GridBagConstraints.NONE;
 
 		sizeX = 1550; // 크기 고정
 		sizeY = 839;
 
-		frame.setSize(sizeX, sizeY);
+		mainFrame.setSize(sizeX, sizeY);
 		Menu = new JPanel();
 		Menu.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 		Menu.setLayout(null);

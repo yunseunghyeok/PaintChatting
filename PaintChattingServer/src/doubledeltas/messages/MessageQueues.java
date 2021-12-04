@@ -104,9 +104,8 @@ public class MessageQueues implements Runnable {
 					}
 					while ((len = Math.min(4096L, fileLength)) > 0) {
 						buf = dis.readNBytes((int)len);
-						System.out.println(fileLength);
-						fileLength -= len;
 						fos.write(buf);
+						fileLength -= len;
 					}
 					fos.close();
 					msg = new SendImageMessage(fileName, file);
@@ -197,10 +196,8 @@ public class MessageQueues implements Runnable {
 			synchronized (hm) {
 				for (byte b: hm.keySet()) {
 					queue = hm.get(b);
-					if (!queue.isEmpty()) {
-						System.out.println("asdf" + b);
+					if (!queue.isEmpty())
 						return queue.poll();
-					}
 				}
 			}
 			if (System.currentTimeMillis() - startTime > timeout)
@@ -224,7 +221,7 @@ public class MessageQueues implements Runnable {
 	 * @return 전송받은 메시지, 제한시간 초과시 <code>null</code>
 	 * @see doubledeltas.messages.Message
 	 */
-	public Message waitForMessage(byte[] types, long timeout) {
+	public Message waitForAnyMessage(byte[] types, long timeout) {
 		long startTime = System.currentTimeMillis();
 		LinkedList<Message> queue;
 		while (true) {
@@ -246,7 +243,42 @@ public class MessageQueues implements Runnable {
 	 * @return 전송받은 메시지
 	 * @see doubledeltas.messages.Message
 	 */
-	public Message waitForMessage(byte[] types) {
-		return waitForMessage(types, Long.MAX_VALUE);
+	public Message waitForAnyMessage(byte[] types) {
+		return waitForAnyMessage(types, Long.MAX_VALUE);
+	}
+	
+	/**
+	 * types의 원소를 타입으로 하는 모든 메시지가 입력되기 기다림
+	 * @param types	메시지 타입들
+	 * @param timeout 대기 제한시간
+	 * @return 타입과 메시지가 대응된 해시맵, 시간 초과 시 null.
+	 */
+	public HashMap<Byte, Message> waitForAllMessages(byte[] types, long timeout) {
+		long startTime = System.currentTimeMillis();
+		HashMap<Byte, Message> res = new HashMap<Byte, Message>();
+		LinkedList<Message> queue;
+		int cnt = 0;
+		while (true) {
+			for(byte type: types) {
+				if (res.get(type) != null) continue;
+				queue = hm.get(type);
+				if (queue == null) continue;
+				if (!queue.isEmpty()) {
+					res.put(type, queue.poll());
+					if (cnt == types.length) return res;
+					else cnt++;
+				}
+			}
+			if (System.currentTimeMillis() - startTime > timeout)
+				return null;
+		}
+	}
+	/**
+	 * types의 원소를 타입으로 하는 모든 메시지가 입력되기를 제한없이 기다림
+	 * @param types	메시지 타입들
+	 * @return 타입과 메시지가 대응된 해시맵
+	 */
+	public HashMap<Byte, Message> waitForAllMessages(byte[] types) {
+		return waitForAllMessages(types, Long.MAX_VALUE);
 	}
 }

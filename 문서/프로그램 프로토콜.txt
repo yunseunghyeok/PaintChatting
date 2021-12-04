@@ -15,6 +15,7 @@ DataInputStream / DataOutputStream으로 읽고 씀
 (B): byte
 (I): int
 (S): String(Modified UTF-8)
+[*]: Broadcast될 수 있음(서버에서 여러 클라이언트에 전송됨)
 
 Constant Name			Value	Meaning			Direction	Parameters
 ----------------------------------------------------------------------------------------------------------

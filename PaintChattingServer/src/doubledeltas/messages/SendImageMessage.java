@@ -24,8 +24,9 @@ implements Broadcastable, ClientRecievable, ServerRecievable
 		
 		FileInputStream fin = new FileInputStream(this.file);
 		byte[] buf = new byte[4096];
-		while (fin.read(buf) != -1) {
-			dos.write(buf);
+		int len;
+		while ((len = fin.read(buf)) != -1) {
+			dos.write(buf, 0, len);
 		}
 		fin.close();
 	}

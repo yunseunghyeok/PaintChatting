@@ -160,6 +160,18 @@ public class ServerThread extends Thread {
     }
     
     /**
+     * 유저가 채팅방에 입장하려 함
+     * @param id
+     * @param roomid
+     */
+    private void handle(RoomEnterMessage msg) {
+    	Logger.l(String.format("클라이언트 [%s]로부터 채팅방 입장 요청", socket.getInetAddress().toString()));
+    	if (!doesRoomIDExist(msg.getRoomID())) {
+    		
+    	}
+    }
+    
+    /**
      * 채팅방을 생성, 8자리의 무작위 숫자를 ID로 하여 채팅방을 생성한다.
      */
     private void handle(RoomCreateMessage msg) {
@@ -188,20 +200,10 @@ public class ServerThread extends Thread {
             return false;
         }
     }
-    
-    
-    /**
-     * 유저가 채팅방에 입장하려 함
-     * @param id
-     * @param roomid
-     */
-    private void handle(RoomEnterMessage msg) {
-    	Logger.l(String.format("클라이언트 [%s]로부터 채팅방 입장 요청", socket.getInetAddress().toString()));
-    	
-    }
+
     
     private void handle(SendImageMessage msg) {
-    	Logger.l(String.format("클라이언트 [%s]가 이미지 전송 성공: %s",
+    	Logger.l(String.format("클라이언트 [%s]로부터 이미지 수신 성공: %s",
     			socket.getInetAddress().toString(), msg.getFileName()
     			));
     }

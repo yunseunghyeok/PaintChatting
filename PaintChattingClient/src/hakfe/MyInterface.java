@@ -1,27 +1,38 @@
 //12 . 01 . Wed 수정
 //hakfe. . .
+//C:\PaintChatting\images\
 package hakfe;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.*;
 import javax.swing.event.*;
 
+import doubledeltas.environments.*;
+import doubledeltas.messages.*;
 public class MyInterface extends JFrame {
-
+	
+	Socket socket;
+	DataInputStream dis;
+	DataOutputStream dos;
+	MessageQueues qs;
+	
 	Container c;
-
+	JFrame mainFrame;
 	JPanel ChattingRoom;
 	JPanel ChattingRoomName;
 	JPanel UserList;
@@ -49,9 +60,7 @@ public class MyInterface extends JFrame {
 	ImageIcon menuImage = new ImageIcon("img/메뉴.png");
 	ImageIcon changeColorImage = new ImageIcon("img/색 선택.png");
 	ImageIcon sendImage = new ImageIcon("img/전송.png");
-	
-	//Font font = new Font();
-	
+
 	int sizeX;
 	int sizeY;
 	int imgCount = 1;
@@ -77,19 +86,30 @@ public class MyInterface extends JFrame {
 	int penThickNess = 0;
 
 	public MyInterface() {
-		JFrame frame = new JFrame("PaintChatting");
+		try {
+		socket = new Socket("서버주소", Environment.CLIENT_TO_SERVER_PORT);
+		// 서버 주소는 그 컴에서 열면 localhost, 내 서버컴으로 연 서버는 서버 완성 후 알려드림
+		dis = new DataInputStream(socket.getInputStream());
+		dos = new DataOutputStream(socket.getOutputStream());
+		qs = new MessageQueues(dis);
+		}
+		catch(IOException ioe) {
+			ioe.printStackTrace();
+		}
+		
+		mainFrame = new JFrame("PaintChatting");
 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		c = frame.getContentPane();
-		frame.setVisible(true);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		c = mainFrame.getContentPane();
+		mainFrame.setVisible(true);
 		c.setLayout(null);
 		gbc.fill = GridBagConstraints.NONE;
 
 		sizeX = 1550; // 크기 고정
 		sizeY = 839;
 
-		frame.setSize(sizeX, sizeY);
+		mainFrame.setSize(sizeX, sizeY);
 		Menu = new JPanel();
 		Menu.setBorder(new TitledBorder(new LineBorder(new Color(209, 209, 209))));
 		Menu.setLayout(null);
@@ -149,12 +169,12 @@ public class MyInterface extends JFrame {
 		c.add(UserList);
 		UserList.setBackground(new Color(107, 107, 107));
 		UserList.setVisible(true);
-		
+
 		/*
-		 *  db 통해여 유저 목록 출력해야함.
+		 * db 통해여 유저 목록 출력해야함.
 		 * 
-		 * */
-		
+		 */
+
 		new ChattingDisplayPanelByMe();
 		new ChattingDisplayPanelByAnother();
 
@@ -228,6 +248,7 @@ public class MyInterface extends JFrame {
 			ChattingDisplayByAnother.setBackground(new Color(130, 130, 130));
 		}
 	}
+
 	class ChattingDisplayPanelByMe extends JPanel {
 		public ChattingDisplayPanelByMe() {
 			ChattingDisplayByMe = new JPanel();
@@ -259,6 +280,7 @@ public class MyInterface extends JFrame {
 			Canvas.addMouseMotionListener(new CanvasMouseMotionListener());
 			gp = Canvas.getGraphics();
 		}
+
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 		}
@@ -346,27 +368,25 @@ public class MyInterface extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					ImageIcon Updateicon = null;
 					// BufferedImage
-					Rectangle screenRect = 
-							new Rectangle(Canvas.getX(), Canvas.getY()+20, 
-									Canvas.getWidth() - 30, Canvas.getHeight());
+					Rectangle screenRect = new Rectangle(Canvas.getX(), Canvas.getY() + 20, Canvas.getWidth() - 30,
+							Canvas.getHeight());
 					BufferedImage image = null;
 					try {
-						image  = new Robot().createScreenCapture(screenRect);
-					}
-					catch (AWTException e1){
+						image = new Robot().createScreenCapture(screenRect);
+					} catch (AWTException e1) {
 						e1.printStackTrace();
 					}
 					try {
-					//	ImageIO.write(image, "png", new File("C:/javaPanelToImage/image" + imgCount + ".png"));
-					//	ImageIcon icon = new ImageIcon("C:/javaPanelToImage/image" + imgCount + ".png");
-					//	Image img = icon.getImage();
+						ImageIO.write(image, "png", new File("C:/javaPanelToImage/image" + imgCount + ".png"));
+						ImageIcon icon = new ImageIcon("C:/javaPanelToImage/image" + imgCount + ".png");
+						Image img = icon.getImage();
 						Image updateImg = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
 						Updateicon = new ImageIcon(updateImg);
-						
+
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
-					
+
 					JLabel gpLabel = new JLabel(Updateicon);
 					gpLabel.setPreferredSize(new Dimension(100, 100));
 					JLabel st = new JLabel();
@@ -376,11 +396,12 @@ public class MyInterface extends JFrame {
 					gbcFormByMe(st, 0, displayCntByMe, 1, 1);
 					displayCntByMe++;
 					scrollPane.updateUI();
-					
+
 					imgCount++;
 				}
 			});
 		}
+
 		public void collocateCurrentColorLabel() {
 			SelectingColor.add(currentColorLabel);
 			currentColorLabel.setOpaque(true);
@@ -483,6 +504,7 @@ public class MyInterface extends JFrame {
 
 			displayLabel = new JLabel(temp);
 			displayLabel.setPreferredSize(new Dimension(250, 70));
+			// displayLabel.setFont(new Font());
 			gbcFormByMe(displayLabel, 0, displayCntByMe, 1, 1);
 			displayCntByMe++;
 			ChattingSendArea.setText("");
@@ -496,10 +518,9 @@ public class MyInterface extends JFrame {
 		gbc.gridheight = h;
 		ChattingDisplayByMe.add(c, gbc);
 	}
-	
+
 	public static void main(String[] args) {
 		new MyInterface();
 		new LoginFrame();
 	}
-
 }

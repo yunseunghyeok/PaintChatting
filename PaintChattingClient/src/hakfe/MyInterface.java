@@ -16,11 +16,20 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.*;
 import javax.swing.event.*;
+
+import doubledeltas.environments.*;
+import doubledeltas.messages.*;
 public class MyInterface extends JFrame {
+	
+	Socket socket;
+	DataInputStream dis;
+	DataOutputStream dos;
+	MessageQueues qs;
 	
 	Container c;
 	JFrame mainFrame;
@@ -77,6 +86,17 @@ public class MyInterface extends JFrame {
 	int penThickNess = 0;
 
 	public MyInterface() {
+		
+		try {
+		socket = new Socket("서버주소", Environment.CLIENT_TO_SERVER_PORT);
+		// 서버 주소는 그 컴에서 열면 localhost, 내 서버컴으로 연 서버는 서버 완성 후 알려드림
+		dis = new DataInputStream(socket.getInputStream());
+		dos = new DataOutputStream(socket.getOutputStream());
+		qs = new MessageQueues(dis);
+		}
+		catch(IOException ioe) {
+			ioe.printStackTrace();
+		}
 		
 		mainFrame = new JFrame("PaintChatting");
 

@@ -21,7 +21,7 @@ Constant Name			Value	Meaning			Direction	Parameters
 ----------------------------------------------------------------------------------------------------------
 
 LOGIN				0x01	로그인 요청		C -> S		UserID(S) UserPW(S)
-LOGIN_SUC			0x02	로그인 성공		S -> C		-
+LOGIN_SUC			0x02	로그인 성공		S -> C		RoomCount(I) (RoomName(S))*RoomCount
 LOGIN_FAIL			0x03	로그인 실패		S -> C		-
 REGISTER			0x04	회원가입 요청		C -> S		UserID(S) UserPW(S) UserNick(S)
 REGISTER_SUC			0x05	회원가입 성공		S -> C		-

@@ -30,4 +30,5 @@
     <fullyQualifiedTypeName name="java.lang.String"/>
     <fullyQualifiedTypeName name="java.sql.ResultSet"/>
     <fullyQualifiedTypeName name="doubledeltas.environments.Environment"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.UserNickChangeFailMessage"/>
 </qualifiedTypeNameHistroy>

@@ -53,7 +53,10 @@ public class MessageQueues implements Runnable {
 					msg = new LoginMessage(dis.readUTF(), dis.readUTF());
 					break;
 				case TransferCode.LOGIN_SUC:
-					msg = new LoginSucMessage();
+					int cnt = dis.readInt();
+					String[] rooms = new String[cnt];
+					for (int i=0; i<cnt; i++)	rooms[i] = dis.readUTF();
+					msg = new LoginSucMessage(rooms);
 					break;
 				case TransferCode.LOGIN_FAIL:
 					msg = new LoginFailMessage(dis.readByte());

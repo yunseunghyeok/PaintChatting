@@ -30,5 +30,8 @@ public class TransferCode {
     USER_PROFILE_CHANGE_FAIL	= 0x15,
     ROOM_CREATE					= 0x16,
     ROOM_CREATE_SUC				= 0x17,
-    ROOM_CREATE_FAIL			= 0x18;
+    ROOM_CREATE_FAIL			= 0x18,
+    USER_FONT_CHANGE			= 0x19,
+    USER_FONT_CHANGE_SUC		= 0x1A,
+    USER_FONT_CHANGE_FAIL		= 0x1B;
 }

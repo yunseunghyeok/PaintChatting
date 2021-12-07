@@ -7,7 +7,7 @@ public class ChatFailMessage extends Message
 implements ClientRecievable
 {
 	public static final byte
-	UNKNOWN = 1;
+	UNKNOWN			= 0;
 	
 	private byte reason;
 	

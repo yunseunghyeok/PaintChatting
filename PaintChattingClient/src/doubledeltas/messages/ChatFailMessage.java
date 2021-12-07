@@ -8,6 +8,7 @@ implements ClientRecievable
 {
 	public static final byte
 	UNKNOWN			= 0;
+	UNKNOWN 		= 1;
 	
 	private byte reason;
 	

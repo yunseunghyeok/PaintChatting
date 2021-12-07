@@ -7,9 +7,13 @@ public class RoomEnterFailMessage extends Message
 implements ClientRecievable
 {
 	public static final byte
+<<<<<<< HEAD
 	UNKNOWN = 0x00,
 	NO_MATCHED_ROOM = 0x01,
 	ALREADY_JOINED = 0x02;
+=======
+	UNKNOWN = 0x00;
+>>>>>>> hakfe
 	
 	private byte reason;
 	

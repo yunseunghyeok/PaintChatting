@@ -12,6 +12,9 @@ implements ClientRecievable
 		this.type = TransferCode.LOGIN_SUC;
 		this.rooms = rooms;
 	}
+	public LoginSucMessage() {
+		this.type = TransferCode.LOGIN_SUC;
+	}
 	
 	@Override
 	public void send(DataOutputStream dos) throws IOException {

@@ -4,7 +4,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class ChatSucMessage extends Message
+<<<<<<< HEAD
 implements ClientRecievable, Broadcastable
+=======
+implements ClientRecievable
+>>>>>>> hakfe
 {
 	private int roomID;
 	private String userID, text, font, imgFileName;
@@ -16,7 +20,12 @@ implements ClientRecievable, Broadcastable
 		this.text = new String(text);
 		this.font = new String(font);
 		this.imgFileName = new String(imgFileName);
+<<<<<<< HEAD
 	}	
+=======
+	}
+	
+>>>>>>> hakfe
 
 	@Override
 	public void send(DataOutputStream dos) throws IOException {

@@ -7,12 +7,9 @@ public class UserNickChangeFailMessage extends Message
 implements ClientRecievable
 {
 	public static final byte
-<<<<<<< HEAD
 	UNKNOWN		= 0x00,
 	SAME_NICK	= 0x01;
-=======
 	UNKNOWN = 0x00;
->>>>>>> hakfe
 	
 	public byte reason;
 	

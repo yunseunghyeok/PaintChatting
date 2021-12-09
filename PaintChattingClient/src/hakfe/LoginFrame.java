@@ -12,7 +12,8 @@ import javax.swing.event.*;
 public class LoginFrame extends JFrame {
 	JFrame loginFrame;
 	JLabel idLabel, passWordLabel,dbCheckLabel;
-	JTextField nameField, passWordField;
+	JTextField nameField;
+	JPasswordField passWordField;
 	JButton submit, cancle, signUp;
 	public LoginFrame() {
 		
@@ -47,13 +48,14 @@ public class LoginFrame extends JFrame {
 	class addTextField {
 		private addTextField() {
 			nameField = new JTextField();
-			passWordField = new JTextField();
+			passWordField = new JPasswordField();
 
 			loginFrame.add(nameField);
 			nameField.setBounds(80, 20, 150, 30);
 
 			loginFrame.add(passWordField);
 			passWordField.setBounds(80, 90, 150, 30);
+			passWordField.setEchoChar('*');
 		}
 	}
 	class addButton {

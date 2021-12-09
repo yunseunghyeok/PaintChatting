@@ -6,8 +6,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 import javax.swing.event.*;
+
+import doubledeltas.messages.*;
 
 public class LoginFrame extends JFrame {
 	JFrame loginFrame;
@@ -15,7 +19,14 @@ public class LoginFrame extends JFrame {
 	JTextField nameField;
 	JPasswordField passWordField;
 	JButton submit, cancle, signUp;
-	public LoginFrame() {
+
+	MyInterface parent;
+	DataOutputStream dos;
+	MessageQueues qs;
+	public LoginFrame(MyInterface parent) {
+		this.parent = parent;
+		this.dos = parent.dos;
+		this.qs = parent.qs;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -88,7 +99,47 @@ public class LoginFrame extends JFrame {
 			 * 사용자에게 존재하지 않는 입력값이라고 표시해주기 위함임.
 			 * 아이디와 비밀번호 구분 하지 않음. 
 			 */
-			loginFrame.dispose();
+			String id = nameField.getText();
+			String pw = "";
+			Message msg;
+			char[] secret_pw = passWordField.getPassword();
+			for(char cha : secret_pw){ 
+				Character.toString(cha);
+				pw += (pw.equals("")) ? ""+cha+"" : ""+cha+"";
+			}
+			try {
+				new LoginMessage(id, pw).send(dos);
+				msg = qs.waitForAnyMessage(new byte[]{TransferCode.LOGIN_SUC, TransferCode.LOGIN_FAIL});
+				if (msg instanceof LoginSucMessage) {
+					parent.UserID = id;
+					for (String name: ((LoginSucMessage) msg).getRooms()) {
+						JButton bt = new JButton(name);
+						bt.setVisible(true);
+						parent.addChattingRoomButtonVec.add(bt);
+						parent.gbcForm(bt, 0, parent.count, 1, 1);
+						parent.count++;
+					}
+					parent.roomScroll.updateUI();
+					loginFrame.dispose();
+				}
+				else if (msg instanceof LoginFailMessage) {
+					byte reason = ((LoginFailMessage) msg).getReason();
+					switch (reason) {
+					case LoginFailMessage.NO_ID_FOUND:
+						dbCheckLabel.setText("존재하지 않는 ID입니다!");
+						break;
+					case LoginFailMessage.PASSWORD_WRONG:
+						dbCheckLabel.setText("패스워드가 틀렸습니다!");
+						break;
+					default:
+						dbCheckLabel.setText("알 수 없는 오류가 발생했습니다!");
+						break;
+					}
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
 		}
 	}
 	class loginCanleButtonListener implements ActionListener { 
@@ -100,10 +151,7 @@ public class LoginFrame extends JFrame {
 	class loginSignUpButtonListener implements ActionListener { 
 		// 회원가입 버튼 액션 리스너 클래스
 		public void actionPerformed(ActionEvent e) {
-			new SignUpFrame();
+			new SignUpFrame(LoginFrame.this);
 		}
-	}
-	public static void main(String[] args) {
-		new LoginFrame();
 	}
 }

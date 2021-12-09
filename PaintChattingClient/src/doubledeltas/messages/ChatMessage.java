@@ -9,18 +9,26 @@ implements ServerRecievable
 	private int roomID;
 	private String userID, text, imageFileName;
 	
-	
-	public ChatMessage(int roomID, String userID, String text) {
+	public ChatMessage(int roomID, String userID, String text, String imageFileName) {
 		this.type = TransferCode.CHAT;
 		this.roomID = roomID;
 		this.userID = new String(userID);
 		this.text = new String(text);
 		this.imageFileName = new String(imageFileName);
 	}
+	
+	public ChatMessage(int roomID, String userID, String text) {
+		this.type = TransferCode.CHAT;
+		this.roomID = roomID;
+		this.userID = new String(userID);
+		this.text = new String(text);
+		this.imageFileName = null;
+	}
+	
 	@Override
 	public void send(DataOutputStream dos) throws IOException {
 		super.send(dos);
-		dos.write(roomID);
+		dos.writeInt(roomID);
 		dos.writeUTF(userID);
 		dos.writeUTF(text);
 	}
@@ -30,4 +38,3 @@ implements ServerRecievable
 	public String getText() { return text; }
 	public String getImageFileName() { return imageFileName; }	// nullable
 }
- }

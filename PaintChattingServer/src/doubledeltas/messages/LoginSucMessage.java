@@ -21,4 +21,6 @@ implements ClientRecievable
 			dos.writeUTF(rooms[i]);
 		}
 	}
+	
+	public String[] getRooms() { return rooms; }
 }

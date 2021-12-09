@@ -34,5 +34,4 @@ public class TransferCode {
     USER_FONT_CHANGE			= 0x19,
     USER_FONT_CHANGE_SUC		= 0x1A,
     USER_FONT_CHANGE_FAIL		= 0x1B;
-    ROOM_CREATE_FAIL			= 0x18;
 }

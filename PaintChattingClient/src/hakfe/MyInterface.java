@@ -18,13 +18,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.*;
 import javax.swing.event.*;
-
+import doubledeltas.environments.*;
+import doubledeltas.messages.*;
 
 public class MyInterface extends JFrame {
 	
-	String UserID, UserNick, Font, IgmFileName, Text;
+	String UserID, Text;
 	
 
 	Container c;
@@ -68,7 +70,7 @@ public class MyInterface extends JFrame {
 
 	int a[], b[];
 	public int count = 1;
-	public int displayCntByMe = 0;
+	public int displayCnt = 0;
 	Color currentColor = Color.RED;
 	Color baseColor[] = { Color.red, Color.orange, Color.yellow, Color.green, Color.blue, new Color(0, 0, 128),
 			new Color(139, 0, 255) };
@@ -81,7 +83,23 @@ public class MyInterface extends JFrame {
 	JSlider settingPenThickNess;
 	int penThickNess = 0;
 
+	/* 서버 관련 필드 */
+	public Socket socket;
+	public DataInputStream dis;
+	public DataOutputStream dos;
+	public MessageQueues qs;
+	
 	public MyInterface() {
+		try {
+			socket = new Socket("localhost", Environment.CLIENT_TO_SERVER_PORT);
+			dis = new DataInputStream(socket.getInputStream());
+			dos = new DataOutputStream(socket.getOutputStream());
+			qs = new MessageQueues(dis);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		mainFrame = new JFrame("PaintChatting");
 
@@ -235,7 +253,7 @@ public class MyInterface extends JFrame {
 			
 			scrollPane2 = new JScrollPane(ChattingDisplayByAnother, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scrollPane2.setBounds(600, 0, sizeX - 1250, sizeY - 200);
+			scrollPane2.setBounds(300, 0, sizeX - 1250, sizeY - 200);
 			c.add(scrollPane2);
 			
 			
@@ -382,11 +400,11 @@ public class MyInterface extends JFrame {
 					JLabel gpLabel = new JLabel(Updateicon);
 					gpLabel.setPreferredSize(new Dimension(100, 100));
 					JLabel st = new JLabel();
-					gbcFormByMe(gpLabel, 0, displayCntByMe, 1, 1);
-					displayCntByMe++;
+					gbcFormByMe(gpLabel, 0, displayCnt, 1, 1);
+					displayCnt++;
 					st.setPreferredSize(new Dimension(20, 20));
-					gbcFormByMe(st, 0, displayCntByMe, 1, 1);
-					displayCntByMe++;
+					gbcFormByMe(st, 0, displayCnt, 1, 1);
+					displayCnt++;
 					scrollPane.updateUI();
 
 					imgCount++;
@@ -482,23 +500,29 @@ public class MyInterface extends JFrame {
 	}
 
 	class SendButtonListener implements ActionListener {
-		String text1 = "<html>";
-		String text2 = "</html>";
-		String brTag = "<br />";
 		public void actionPerformed(ActionEvent e) {
 			JLabel displayLabel;
 			String target = ChattingSendArea.getText();
-			String temp = text1 + target + text2;
-
-			temp = temp.replaceAll("\\n", brTag);
-
-			//new ChatMessage()
-			displayLabel = new JLabel(temp);
-			displayLabel.setPreferredSize(new Dimension(250, 70));
-			// displayLabel.setFont(new Font());
-			gbcFormByMe(displayLabel, 0, displayCntByMe, 1, 1);
-			displayCntByMe++;
-			ChattingSendArea.setText("");
+			String temp = "<html>" + target + "</html>";
+			temp = temp.replaceAll("\\n", "<br/>");
+			
+			if (target.equals("")) return;	// 비어있으면 아무것도 안함
+			
+			Message msg;
+			try {
+				new ChatMessage(10000000, UserID, temp).send(dos);
+				msg = qs.waitForAnyMessage(new byte[] {TransferCode.CHAT_SUC, TransferCode.CHAT_FAIL});
+				if (msg instanceof ChatSucMessage) {
+					displayLabel = new JLabel(temp);
+					displayLabel.setPreferredSize(new Dimension(250, 70));
+					// displayLabel.setFont(new Font());
+					gbcFormByMe(displayLabel, 0, displayCnt, 1, 1);
+					displayCnt++;
+				}
+				ChattingSendArea.setText("");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -511,7 +535,7 @@ public class MyInterface extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new MyInterface();
-		new LoginFrame();
+		MyInterface mi = new MyInterface();
+		new LoginFrame(mi);
 	}
 }

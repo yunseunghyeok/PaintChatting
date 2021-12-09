@@ -74,7 +74,7 @@ public class MysqlConnector {
      */
     public ResultSet sendQuery(String query) throws SQLException {
     	ResultSet rs = null;
-        Statement stmt = conn.createStatement();
+        Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         rs = stmt.executeQuery(query);
         return rs;
     }

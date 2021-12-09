@@ -15,7 +15,10 @@ implements ClientRecievable, Broadcastable
 		this.userID = new String(userID);
 		this.text = new String(text);
 		this.font = new String(font);
-		this.imgFileName = new String(imgFileName);
+		if (imgFileName == null)
+			this.imgFileName = "0";
+		else
+			this.imgFileName = new String(imgFileName);
 	}	
 
 	@Override

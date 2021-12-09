@@ -18,13 +18,17 @@ implements ServerRecievable
 	}
 	
 	public ChatMessage(int roomID, String userID, String text) {
-		this(roomID, userID, text, null);
+		this.type = TransferCode.CHAT;
+		this.roomID = roomID;
+		this.userID = new String(userID);
+		this.text = new String(text);
+		this.imageFileName = "0";
 	}
 
 	@Override
 	public void send(DataOutputStream dos) throws IOException {
 		super.send(dos);
-		dos.write(roomID);
+		dos.writeInt(roomID);
 		dos.writeUTF(userID);
 		dos.writeUTF(text);
 	}

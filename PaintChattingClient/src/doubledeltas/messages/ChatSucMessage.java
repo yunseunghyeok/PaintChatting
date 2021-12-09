@@ -16,7 +16,6 @@ implements ClientRecievable, Broadcastable
 		this.text = new String(text);
 		this.font = new String(font);
 		this.imgFileName = new String(imgFileName);
-	}	
 	}
 	
 

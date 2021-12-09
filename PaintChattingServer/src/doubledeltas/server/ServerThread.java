@@ -161,10 +161,21 @@ public class ServerThread extends Thread {
             int cnt = rs.getRow();
             String[] rooms = new String[cnt];
             rs.beforeFirst();
-            for(int i=0; i<cnt; i++) {
-            	rs.next();
-            	rooms[i] = rs.getString("room_id");
-            }
+            int i=0;
+            int roomid;
+        	while (rs.next()) {
+        		roomid = rs.getInt("room_id");
+        		ResultSet rs2 = con.sendQuery(String.format(
+        				"SELECT name FROM chatroom WHERE id='%d'",
+        				roomid
+        				));
+        		rs2.next();
+        		rooms[i] = rs2.getString("name");
+        		synchronized (hm) {
+            		hm.get(roomid).put(msg.getID(), dos);
+        		}
+        		i++;
+        	}
             new LoginSucMessage(rooms).send(dos);
             Logger.l(String.format("%s 로그인 성공.", msg.getID()));
             return;
@@ -289,12 +300,12 @@ public class ServerThread extends Thread {
 			
 			// log chat
 			int row = con.sendUpdateQuery(String.format(
-					"INSERT INTO chat_log VALUES (%d, %s, %s, %s, %s)",
+					"INSERT INTO chat_log VALUES (%d, '%s', %d, '%s', '%s')",
 					System.currentTimeMillis(),
 					msg.getUserID(),
 					msg.getRoomID(),
 					msg.getText(),
-					msg.getImageFileName()
+					(msg.getImageFileName() != null) ? msg.getImageFileName() : "0"
 					));
 			if (row != 1) {
 	        	Logger.l(String.format("%s 채팅 로그 오류", msg.getUserID()));
@@ -306,7 +317,7 @@ public class ServerThread extends Thread {
 			e.printStackTrace();
 		}
 		
-    	if (msg.getImageFileName() != null) {
+    	if (!msg.getImageFileName().equals("0")) {
     		File file = new File(Environment.FILE_DIR + "\\" + msg.getImageFileName());
     		try {
         		new SendImageMessage(msg.getImageFileName(), file).broadcast(hm, msg.getRoomID());

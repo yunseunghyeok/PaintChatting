@@ -1,24 +1,37 @@
 package hakfe;
 
 import javax.swing.*;
+
+import doubledeltas.messages.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class SignUpFrame extends JFrame {
 	JLabel name, id, passWord, checkPassWord, nickName;
 	JButton submit, cancle;
-	JTextField nameField, idField, passWordField, nickNameField;
+	JTextField idField, passWordField, nickNameField;
 	JPasswordField checkPassWordField;
 	JFrame frame;
 	JLabel passWordCheck;
-	public SignUpFrame() {
+	
+	LoginFrame parent;
+	DataOutputStream dos;
+	MessageQueues qs;
+	public SignUpFrame(LoginFrame parent) {	// parent: LoginFrame
+		this.parent = parent;
+		this.dos = parent.parent.dos;
+		this.qs = parent.parent.qs;
+		
 		Dimension dim = new Dimension(500, 800);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame = new JFrame("회원가입");
 		frame.setLocation(100, 100);
-		frame.setSize(400, 550);
+		frame.setSize(400, 500);
 		frame.setPreferredSize(dim);
 		frame.setVisible(true);
 		frame.setLayout(null);
@@ -31,7 +44,7 @@ public class SignUpFrame extends JFrame {
 
 	class AddLabel {
 		private AddLabel() {
-			name = new JLabel("이름 : ");
+			name = new JLabel("닉네임 : ");
 			id = new JLabel("아이디 : ");
 			passWord = new JLabel("비밀번호 : ");
 			checkPassWord = new JLabel("비밀번호 확인 : ");
@@ -47,23 +60,19 @@ public class SignUpFrame extends JFrame {
 			passWord.setBounds(20, 200, 90, 30);
 			
 			frame.add(checkPassWord);
-			checkPassWord.setBounds(20, 290, 90, 30);
-			
-			frame.add(nickName);
-			nickName.setBounds(20, 380, 90, 30);
+			checkPassWord.setBounds(20, 300, 90, 30);
 		}
 	}
 
 	class AddTextField {
 		private AddTextField() {
-			nameField = new JTextField("이름을 입력하세요.", 40);
-			idField = new JTextField("아이디를 입력하세요.", 40);
-			passWordField = new JTextField("비밀번호를 입력하세요.", 40);
-			checkPassWordField = new JPasswordField("비밀번호를 다시 입력하세요.", 40);
-			nickNameField = new JTextField("사용할 닉네임을 입력하세요.", 40);
+			nickNameField = new JTextField("", 40);
+			idField = new JTextField("", 40);
+			passWordField = new JTextField("", 40);
+			checkPassWordField = new JPasswordField("", 40);
 
-			frame.add(nameField);
-			nameField.setBounds(150, 20, 200, 30);
+			frame.add(nickNameField);
+			nickNameField.setBounds(150, 20, 200, 30);
 			
 			frame.add(idField);
 			idField.setBounds(150, 110, 200, 30);
@@ -75,8 +84,6 @@ public class SignUpFrame extends JFrame {
 			checkPassWordField.setBounds(150, 290, 200, 30);
 			checkPassWordField.setEchoChar('*');
 			
-			frame.add(nickNameField);
-			nickNameField.setBounds(150, 380, 200, 30);
 		}
 	}
 
@@ -86,19 +93,19 @@ public class SignUpFrame extends JFrame {
 			cancle = new JButton("취소");
 			
 			frame.add(submit);
-			submit.setBounds(80, 450, 90, 30);
+			submit.setBounds(80, 400, 90, 30);
 			submit.addActionListener(new submitButtonListener());
 			
 			frame.add(cancle);
-			cancle.setBounds(230, 450, 90, 30);
+			cancle.setBounds(230, 400, 90, 30);
 			cancle.addActionListener(new cancleButtonListener());
 		}
 	}
 	class AddCheckLabel {
 		private AddCheckLabel() {
-			passWordCheck = new JLabel("비밀번호 확인용 라벨");
+			passWordCheck = new JLabel();
 			frame.add(passWordCheck);
-			passWordCheck.setBounds(150, 225, 200, 30);
+			passWordCheck.setBounds(100, 330, 200, 30);
 		}
 	}
 	class submitButtonListener implements ActionListener { // 확인버튼 액션 리스너 클래스
@@ -118,13 +125,31 @@ public class SignUpFrame extends JFrame {
 				}
 				else if(passWordField.getText().equals(pw)){
 					//두 문자열이 같을 경우, db에 정보 저장하고, 전체 프레임이 닫기면서 작업이 완료됨.
-					/*
-					
-							db코드
-					   
-					 */
-					passWordCheck.setText("비밀번호가 올바릅니다.");
-					frame.dispose(); // 해당 프레임만 닫기는 코드
+					String id = idField.getText();
+					String nick = nickNameField.getText();
+					Message msg;
+					try {
+						new RegisterMessage(id, pw, nick).send(dos);
+						msg = qs.waitForAnyMessage(new byte[] {TransferCode.REGISTER_SUC, TransferCode.REGISTER_FAIL});
+						if (msg instanceof RegisterSucMessage) {
+							qs.waitForMessage(TransferCode.LOGIN_SUC);
+							parent.loginFrame.dispose();
+							frame.dispose(); // 해당 프레임만 닫기는 코드
+						}
+						else if (msg instanceof RegisterFailMessage) {
+							byte reason = ((RegisterFailMessage) msg).getReason();
+							switch (reason) {
+							case RegisterFailMessage.DUPLICATED_ID:
+								passWordCheck.setText("이미 사용 중인 ID입니다!");
+								break;
+							default:
+								passWordCheck.setText("알 수 없는 오류가 발생했습니다!");
+								break;
+							}
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		}
@@ -136,9 +161,4 @@ public class SignUpFrame extends JFrame {
 			}
 		}
 	}
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		new SignUpFrame();
-	}
-
 }

@@ -3,7 +3,7 @@ package doubledeltas.server;
 import java.sql.*;
 
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
-import doubledeltas.utils.Environment;
+import doubledeltas.environments.*;
 import doubledeltas.utils.Logger;
 
 public class MysqlConnector {
@@ -11,52 +11,55 @@ public class MysqlConnector {
     private Connection conn;
     
     /**
-     * MySQL ì„œë²„ì™€ ì—°ê²°ëëŠ”ì§€ ì—¬ë¶€ë¥¼ ê°€ì ¸ì˜´.
+     * MySQL ¼­¹ö¿Í ¿¬°áµÆ´ÂÁö ¿©ºÎ¸¦ °¡Á®¿È.
      */
     public boolean isConnected() {
     	return conn != null;
     }
 
     /**
-     * MySQL ì„œë²„ì™€ ì—°ê²°í•´ Connection ê°ì²´ë¥¼ ê°€ì ¸ì˜´.
-     * @param address DB ì£¼ì†Œ
-     * @param port DB í¬íŠ¸
-     * @param dbUser MySQL ì‚¬ìš©ì ì´ë¦„
-     * @param dbPassword MySQL íŒ¨ìŠ¤ì›Œë“œ
+     * MySQL ¼­¹ö¿Í ¿¬°áÇØ Connection °´Ã¼¸¦ °¡Á®¿È.
+     * @param address DB ÁÖ¼Ò
+     * @param port DB Æ÷Æ®
+     * @param dbUser MySQL »ç¿ëÀÚ ÀÌ¸§
+     * @param dbPassword MySQL ÆĞ½º¿öµå
      */
     public MysqlConnector(String address, int port, String dbUser, String dbPassword)
     {
         conn = null;
 
-        Logger.l("MysqlConnector ì—°ê²° ì‹œë„...");
+        Logger.l("MysqlConnector ¿¬°á ½Ãµµ...");
         Logger.l("DBMS Address:\t" + address + ":" + port);
         Logger.l("DBMS UserInfo:\t" + dbUser + " / " + dbPassword);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL
             conn = DriverManager.getConnection(
-                    "jdbc:mysql://" + address + ":" + port,
+                    "jdbc:mysql://" + address + ":" + port + "/paintchattingdb",
                     dbUser, dbPassword);
-            Logger.l("MysqlConnector ì—°ê²° ì„±ê³µ!");
+            Logger.l("MysqlConnector ¿¬°á ¼º°ø!");
         } catch (ClassNotFoundException e) {
-            Logger.l("MySqlConnector ì—°ê²° ì‹¤íŒ¨: Connector J ì—°ê²° ì‹¤íŒ¨");
+            Logger.l("MySqlConnector ¿¬°á ½ÇÆĞ: Connector J ¿¬°á ½ÇÆĞ");
             e.printStackTrace();
         } catch (CommunicationsException e) {
-            Logger.l("MySqlConnector ì—°ê²° ì‹¤íŒ¨: ì£¼ì†Œ ì—°ê²° ì‹¤íŒ¨");
+            Logger.l("MySqlConnector ¿¬°á ½ÇÆĞ: ÁÖ¼Ò ¿¬°á ½ÇÆĞ");
             e.printStackTrace();
         } catch (SQLTimeoutException e) {
-            Logger.l("MySqlConnector ì—°ê²° ì‹¤íŒ¨: DB ë¡œê·¸ì˜¨ íƒ€ì„ì•„ì›ƒ");
+            Logger.l("MySqlConnector ¿¬°á ½ÇÆĞ: DB ·Î±×¿Â Å¸ÀÓ¾Æ¿ô");
             e.printStackTrace();
         } catch (SQLException e) {
-            Logger.l("MySqlConnector ì—°ê²° ì‹¤íŒ¨: DB ë¡œê·¸ì˜¨ ì‹¤íŒ¨");
+            Logger.l("MySqlConnector ¿¬°á ½ÇÆĞ: DB ·Î±×¿Â ½ÇÆĞ");
+            e.printStackTrace();
+        } catch (Exception e) {
+            Logger.l("MySqlConnector ¿¬°á ½ÇÆĞ: ¿øÀÎ ºÒ¸í");
             e.printStackTrace();
         }
     }
 
     /**
-     * MySQL ì„œë²„ì™€ ì—°ê²°í•´ Connection ê°ì²´ë¥¼ ê°€ì ¸ì˜´. ì—°ê²° portëŠ” MySQL ê¸°ë³¸ê°’ì¸ 3306.
-     * @param address DB ì£¼ì†Œ
-     * @param dbUser MySQL ì‚¬ìš©ì ì´ë¦„
-     * @param dbPassword MySQL íŒ¨ìŠ¤ì›Œë“œ
+     * MySQL ¼­¹ö¿Í ¿¬°áÇØ Connection °´Ã¼¸¦ °¡Á®¿È. ¿¬°á port´Â MySQL ±âº»°ªÀÎ 3306.
+     * @param address DB ÁÖ¼Ò
+     * @param dbUser MySQL »ç¿ëÀÚ ÀÌ¸§
+     * @param dbPassword MySQL ÆĞ½º¿öµå
      */
     MysqlConnector(String address, String dbUser, String dbPassword)
     {
@@ -64,10 +67,10 @@ public class MysqlConnector {
     }
     
     /**
-     * MySQL ì„œë²„ì— ì¿¼ë¦¬ë¥¼ ë³´ë‚´ ë ˆì½”ë“œë¥¼ ê°€ì ¸ì˜¤ê¸°(select)
-     * @param query ë³´ë‚¼ Queryë¬¸
-     * @return ë ˆì½”ë“œê°€ ìˆëŠ” <code>ResultSet</code>
-     * @throws SQLException SQLë¬¸ì— ì˜¤ë¥˜ê°€ ìˆì„ ë•Œ
+     * MySQL ¼­¹ö¿¡ Äõ¸®¸¦ º¸³» ·¹ÄÚµå¸¦ °¡Á®¿À±â(select)
+     * @param query º¸³¾ Query¹®
+     * @return ·¹ÄÚµå°¡ ÀÖ´Â <code>ResultSet</code>
+     * @throws SQLException SQL¹®¿¡ ¿À·ù°¡ ÀÖÀ» ¶§
      */
     public ResultSet sendQuery(String query) throws SQLException {
     	ResultSet rs = null;
@@ -77,9 +80,9 @@ public class MysqlConnector {
     }
     
     /**
-     * MySQL ì„œë²„ì— ì¿¼ë¦¬ë¥¼ ë³´ë‚´ ê°’ì„ ë³€ê²½ì‹œí‚¤ê¸°(insert, update, delete)
-     * @param query ë³´ë‚¼ Queryë¬¸
-     * @return queryë¬¸ì— ì˜í–¥ì„ ë°›ì€ ë ˆì½”ë“œ ìˆ˜
+     * MySQL ¼­¹ö¿¡ Äõ¸®¸¦ º¸³» °ªÀ» º¯°æ½ÃÅ°±â(insert, update, delete)
+     * @param query º¸³¾ Query¹®
+     * @return query¹®¿¡ ¿µÇâÀ» ¹ŞÀº ·¹ÄÚµå ¼ö
      */
     public int sendUpdateQuery(String query) {
         int affectedRows = 0;

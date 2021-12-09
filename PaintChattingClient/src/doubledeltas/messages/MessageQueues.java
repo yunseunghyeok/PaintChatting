@@ -2,6 +2,10 @@ package doubledeltas.messages;
 
 import java.io.DataInputStream;
 import java.io.File;
+<<<<<<< HEAD
+import java.io.FileInputStream;
+=======
+>>>>>>> hakfe
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
@@ -52,6 +56,10 @@ public class MessageQueues implements Runnable {
 					msg = new LoginMessage(dis.readUTF(), dis.readUTF());
 					break;
 				case TransferCode.LOGIN_SUC:
+					int cnt = dis.readInt();
+					String[] rooms = new String[cnt];
+					for (int i=0; i<cnt; i++)	rooms[i] = dis.readUTF();
+					msg = new LoginSucMessage(rooms);
 					msg = new LoginSucMessage();
 					break;
 				case TransferCode.LOGIN_FAIL:

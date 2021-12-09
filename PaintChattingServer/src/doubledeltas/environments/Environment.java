@@ -1,20 +1,16 @@
-package doubledeltas.utils;
+package doubledeltas.environments;
 
 public class Environment {
 	/**
-	 * MySQLì˜ ê¸°ë³¸ê°’ í¬íŠ¸.
+	 * MySQLÀÇ ±âº»°ª Æ÷Æ®.
 	 */
     public static int MYSQL_DEFAULT_PORT = 3306;
 	/**
-	 * í´ë¼ì´ì–¸íŠ¸ì—ì„œ ì„œë²„ë¡œ ì „ì†¡í•˜ëŠ” íŒ¨í‚·ì˜ í¬íŠ¸
+	 * Å¬¶óÀÌ¾ğÆ®¿¡¼­ ¼­¹ö·Î Àü¼ÛÇÏ´Â ÆĞÅ¶ÀÇ Æ÷Æ®
 	 */
     public static int CLIENT_TO_SERVER_PORT = 50343; // 0xC4A7 for "CHAT"
 	/**
-	 * ì„œë²„ì—ì„œ í´ë¼ì´ì–¸íŠ¸ë¡œ ì „ì†¡í•˜ëŠ” íŒ¨í‚·ì˜ í¬íŠ¸
-	 */
-    public static int SERVER_TO_CLIENT_PORT = 50344;
-	/**
-	 * ì„œë²„ì—ì„œ íŒŒì¼ì„ ì €ì¥í•˜ëŠ” íŒŒì¼ ê²½ë¡œ
+	 * ¼­¹ö¿¡¼­ ÆÄÀÏÀ» ÀúÀåÇÏ´Â ÆÄÀÏ °æ·Î
 	 */
 	public static String FILE_DIR = "C:\\PaintChatting\\images";
 }

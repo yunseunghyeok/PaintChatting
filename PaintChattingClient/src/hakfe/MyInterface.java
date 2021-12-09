@@ -88,6 +88,7 @@ public class MyInterface extends JFrame {
 	int penThickNess = 0;
 
 	public MyInterface() {
+<<<<<<< HEAD
 //		try {
 //		socket = new Socket("localhost", Environment.CLIENT_TO_SERVER_PORT);
 //		// 서버 주소는 그 컴에서 열면 localhost, 내 서버컴으로 연 서버는 서버 완성 후 알려드림
@@ -98,6 +99,20 @@ public class MyInterface extends JFrame {
 //		catch(IOException ioe) {
 //			ioe.printStackTrace();
 //		}
+=======
+		
+		
+		try {
+		socket = new Socket("112.162.166.138", Environment.CLIENT_TO_SERVER_PORT);
+		// 서버 주소는 그 컴에서 열면 localhost, 내 서버컴으로 연 서버는 서버 완성 후 알려드림
+		dis = new DataInputStream(socket.getInputStream());
+		dos = new DataOutputStream(socket.getOutputStream());
+		qs = new MessageQueues(dis);
+		}
+		catch(IOException ioe) {
+			ioe.printStackTrace();
+		}
+>>>>>>> master
 		
 		mainFrame = new JFrame("PaintChatting");
 

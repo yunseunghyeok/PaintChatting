@@ -7,15 +7,16 @@ public class ChatMessage extends Message
 implements ServerRecievable
 {
 	private int roomID;
-	private String userID, text;
+	private String userID, text, imageFileName;
+	
 	
 	public ChatMessage(int roomID, String userID, String text) {
 		this.type = TransferCode.CHAT;
 		this.roomID = roomID;
 		this.userID = new String(userID);
 		this.text = new String(text);
+		this.imageFileName = new String(imageFileName);
 	}
-
 	@Override
 	public void send(DataOutputStream dos) throws IOException {
 		super.send(dos);
@@ -27,4 +28,6 @@ implements ServerRecievable
 	public int getRoomID() { return roomID; }
 	public String getUserID() { return userID; }
 	public String getText() { return text; }
+	public String getImageFileName() { return imageFileName; }	// nullable
+}
  }

@@ -23,7 +23,7 @@ public class LoginFrame extends JFrame {
 		loginFrame.setSize(350, 300);
 		loginFrame.setVisible(true);
 		loginFrame.setLayout(null);
-
+		
 		new addLabel();
 		new addTextField();
 		new addButton();

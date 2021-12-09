@@ -1,25 +1,78 @@
 package doubledeltas.server;
 
+import doubledeltas.environments.*;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.*;
+import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Vector;
 
 import doubledeltas.utils.Logger;
 
 public class Main {
 	private static Scanner sc = new Scanner(System.in);
+	private static Thread th;
+	private static ServerSocket server;
 
     public static void main(String[] args) {
+		
 		MysqlConnector con =
-				// new MysqlConnector("localhost", "root", "smartist2!");
-				// new MysqlConnector("localhost", "guest", "smartist2!");
-				new MysqlConnector("192.168.0.136", "guest", "paintchat123@");
+				new MysqlConnector("localhost", "root", "smartist2!");
+				// new MysqlConnector("192.168.0.136", "guest", "paintchat123@");
 
 		if (!con.isConnected()) {
-			Logger.l("MysqlConnector ì—°ê²° ì‹¤íŒ¨, ì„œë²„ë¥¼ ì¢…ë£Œí•©ë‹ˆë‹¤.");
-			while (!sc.hasNext()) {	}
+			Logger.l("MysqlConnector ¿¬°á ½ÇÆÐ, ¼­¹ö¸¦ Á¾·áÇÕ´Ï´Ù.");
 			return;
 		}
+		
+		HashMap<Integer /*Ã¤ÆÃ¹æ ID*/, HashMap<String /*¾ÆÀÌµð*/, DataOutputStream /*¿Â¶óÀÎ À¯ÀúÀÇ OS*/>> hm;
+		
+		try {
+			server = new ServerSocket(Environment.CLIENT_TO_SERVER_PORT);
+			hm = new HashMap<Integer, HashMap<String, DataOutputStream>>();	// String: id
+			
+			Socket socket;
+			
+			/////////////// Ã¤ÆÃ¹æ ºÒ·¯¿À±â ////////////////
+			int roomid;
+			String userid;
+			ResultSet rs;
+			int cnt = 0;
+			rs = con.sendQuery(
+					"SELECT id FROM chatroom");
+			while (rs.next()) {
+				roomid = rs.getInt("id");
+				hm.put(roomid, new HashMap<String, DataOutputStream>());
+				cnt++;
+			}
+			Logger.l(String.format("%d°³ÀÇ Ã¤ÆÃ¹æ ·Îµù ¼º°ø!", cnt));
 
-		PollerThread pth = new PollerThread(con);
-		pth.start();
+			Logger.l("·Îµù ¿Ï·á!");
+			
+			//////////// server thread »ý¼º ////////////
+			while (true) {
+				// ¿¬°á ¿Ï·á ÈÄ ÁøÇà
+				socket = server.accept();
+				if (socket != null) {
+					Thread th = new ServerThread(con, socket, hm);
+					th.start();
+				}
+			}
+			//////////////////////////////////////////
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		finally {
+			try {
+				server.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
 	}
 } // Main class END

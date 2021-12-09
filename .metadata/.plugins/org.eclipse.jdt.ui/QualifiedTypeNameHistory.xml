@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="java.util.Scanner"/>
-    <fullyQualifiedTypeName name="doubledeltas.constants.Environment"/>
-    <fullyQualifiedTypeName name="java.io.InputStream"/>
-    <fullyQualifiedTypeName name="java.io.OutputStream"/>
     <fullyQualifiedTypeName name="java.net.Socket"/>
-    <fullyQualifiedTypeName name="doubledeltas.environments.Environment"/>
+    <fullyQualifiedTypeName name="doubledeltas.utils.ByteStringReader"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.LoginFailReason"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.LoginFailMessage"/>
+    <fullyQualifiedTypeName name="java.util.Arrays"/>
+    <fullyQualifiedTypeName name="java.io.OutputStream"/>
     <fullyQualifiedTypeName name="java.io.IOException"/>
-    <fullyQualifiedTypeName name="java.net.ServerSocket"/>
+    <fullyQualifiedTypeName name="com.mysql.cj.protocol.Message"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.Message"/>
+    <fullyQualifiedTypeName name="doubledeltas.server.ServerThread"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.Broadcastable"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.ConnectionCutMessage"/>
+    <fullyQualifiedTypeName name="java.io.InputStream"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.LoginMessage"/>
+    <fullyQualifiedTypeName name="java.net.SocketException"/>
     <fullyQualifiedTypeName name="doubledeltas.environments.TransferCode"/>
+    <fullyQualifiedTypeName name="java.io.DataOutputStream"/>
+    <fullyQualifiedTypeName name="java.util.HashMap"/>
+    <fullyQualifiedTypeName name="java.util.Vector"/>
+    <fullyQualifiedTypeName name="java.io.DataInputStream"/>
+    <fullyQualifiedTypeName name="java.util.LinkedList"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.MessageQueues"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.TransferCode"/>
+    <fullyQualifiedTypeName name="java.io.FileInputStream"/>
+    <fullyQualifiedTypeName name="java.io.File"/>
+    <fullyQualifiedTypeName name="java.io.FileOutputStream"/>
+    <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="java.lang.String"/>
+    <fullyQualifiedTypeName name="java.sql.ResultSet"/>
+    <fullyQualifiedTypeName name="doubledeltas.environments.Environment"/>
+    <fullyQualifiedTypeName name="doubledeltas.messages.UserNickChangeFailMessage"/>
 </qualifiedTypeNameHistroy>

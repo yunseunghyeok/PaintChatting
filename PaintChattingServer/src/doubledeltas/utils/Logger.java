@@ -6,35 +6,35 @@ import java.time.format.DateTimeFormatter;
 
 public class Logger {
     /**
-     * LoggerëŠ” ê°ì²´ë¥¼ ìƒì„±í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. static ë©”ì†Œë“œë¥¼ í˜¸ì¶œí•´ì£¼ì„¸ìš”.
+     * Logger´Â °´Ã¼¸¦ »ı¼ºÇÒ ¼ö ¾ø½À´Ï´Ù. static ¸Ş¼Òµå¸¦ È£ÃâÇØÁÖ¼¼¿ä.
      */
     private Logger() {} // object creation prevented
 
     /**
-     * <code>stdout</code>ì— í˜„ì¬ timestampë¥¼ ì¶œë ¥í•©ë‹ˆë‹¤.
+     * <code>stdout</code>¿¡ ÇöÀç timestamp¸¦ Ãâ·ÂÇÕ´Ï´Ù.
      */
     public static void l() {
         l("");
     }
 
     /**
-     * ì„œë²„ ë¡œê·¸ í•œ ì¤„ì„ timestampì™€ í•¨ê»˜ <code>stdout</code>ì— ì¶œë ¥í•©ë‹ˆë‹¤.
-     * @param txt ì¶œë ¥í•  í…ìŠ¤íŠ¸
+     * ¼­¹ö ·Î±× ÇÑ ÁÙÀ» timestamp¿Í ÇÔ²² <code>stdout</code>¿¡ Ãâ·ÂÇÕ´Ï´Ù.
+     * @param txt Ãâ·ÂÇÒ ÅØ½ºÆ®
      */
     public static void l(String txt) {
         String formattedNow = LocalDateTime.now().format(
-                DateTimeFormatter.ofPattern("MM/dd hh:mm:ss")
+                DateTimeFormatter.ofPattern("MM/dd HH:mm:ss")
         );
         System.out.println("[" + formattedNow + "] " + txt);
     }
 
     /**
-     * ì„œë²„ ë¡œê·¸ ì—¬ëŸ¬ ì¤„ì„ í•˜ë‚˜ì˜ timestampë¥¼ ë¶™ì—¬ <code>stdout</code>ì— ì¶œë ¥í•©ë‹ˆë‹¤.
-     * @param txts ì¶œë ¥í•  í…ìŠ¤íŠ¸ ë°°ì—´
+     * ¼­¹ö ·Î±× ¿©·¯ ÁÙÀ» ÇÏ³ªÀÇ timestamp¸¦ ºÙ¿© <code>stdout</code>¿¡ Ãâ·ÂÇÕ´Ï´Ù.
+     * @param txts Ãâ·ÂÇÒ ÅØ½ºÆ® ¹è¿­
      */
     public static void l(String[] txts) {
         String formattedNow = LocalDateTime.now().format(
-                DateTimeFormatter.ofPattern("MM/dd hh:mm:ss")
+                DateTimeFormatter.ofPattern("MM/dd HH:mm:ss")
         );
         System.out.println("[" + formattedNow + "] ");
         for(String s: txts) {

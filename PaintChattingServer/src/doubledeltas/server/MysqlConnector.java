@@ -30,7 +30,7 @@ public class MysqlConnector {
 
         Logger.l("MysqlConnector 연결 시도...");
         Logger.l("DBMS Address:\t" + address + ":" + port);
-        Logger.l("DBMS UserInfo:\t" + dbUser + " / " + dbPassword);
+        Logger.l("DBMS UserInfo:\t" + dbUser + " / " + "*".repeat(dbPassword.length()));
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL
             conn = DriverManager.getConnection(

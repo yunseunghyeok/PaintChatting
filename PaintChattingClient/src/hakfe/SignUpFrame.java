@@ -13,8 +13,8 @@ import java.io.IOException;
 public class SignUpFrame extends JFrame {
 	JLabel name, id, passWord, checkPassWord, nickName;
 	JButton submit, cancle;
-	JTextField idField, passWordField, nickNameField;
-	JPasswordField checkPassWordField;
+	JTextField idField, nickNameField;
+	JPasswordField passWordField, checkPassWordField;
 	JFrame frame;
 	JLabel passWordCheck;
 	
@@ -68,7 +68,7 @@ public class SignUpFrame extends JFrame {
 		private AddTextField() {
 			nickNameField = new JTextField("", 40);
 			idField = new JTextField("", 40);
-			passWordField = new JTextField("", 40);
+			passWordField = new JPasswordField("", 40);
 			checkPassWordField = new JPasswordField("", 40);
 
 			frame.add(nickNameField);
@@ -82,7 +82,6 @@ public class SignUpFrame extends JFrame {
 			
 			frame.add(checkPassWordField);
 			checkPassWordField.setBounds(150, 290, 200, 30);
-			checkPassWordField.setEchoChar('*');
 			
 		}
 	}
@@ -110,20 +109,16 @@ public class SignUpFrame extends JFrame {
 	}
 	class submitButtonListener implements ActionListener { // 확인버튼 액션 리스너 클래스
 		public void actionPerformed(ActionEvent e) {
-			String pw = "";
-			char[] secret_pw = checkPassWordField.getPassword();
-			for(char cha : secret_pw){ 
-				Character.toString(cha);
-				pw += (pw.equals("")) ? ""+cha+"" : ""+cha+"";
-			}
+			String pw = new String(passWordField.getPassword());
+			String pwCheck = new String(checkPassWordField.getPassword());
 			if(e.getSource() == submit) // 확인 버튼을 누른 경우 
 			{
-				if(!passWordField.getText().equals(pw)) {
+				if(!pw.equals(pwCheck)) {
 					//비밀번호 문자열과 비밀번호 확인 문자열이 다를경우 두 문자열이 같이 않다는 메시지를 라벨에 출력. 프레임은 사라지지 않고 유지.
 					passWordCheck.setForeground(Color.red);
 					passWordCheck.setText("비밀번호가 올바르지 않습니다.");
 				}
-				else if(passWordField.getText().equals(pw)){
+				else {
 					//두 문자열이 같을 경우, db에 정보 저장하고, 전체 프레임이 닫기면서 작업이 완료됨.
 					String id = idField.getText();
 					String nick = nickNameField.getText();
@@ -140,9 +135,11 @@ public class SignUpFrame extends JFrame {
 							byte reason = ((RegisterFailMessage) msg).getReason();
 							switch (reason) {
 							case RegisterFailMessage.DUPLICATED_ID:
+								passWordCheck.setForeground(Color.red);
 								passWordCheck.setText("이미 사용 중인 ID입니다!");
 								break;
 							default:
+								passWordCheck.setForeground(Color.red);
 								passWordCheck.setText("알 수 없는 오류가 발생했습니다!");
 								break;
 							}

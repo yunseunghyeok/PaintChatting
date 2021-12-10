@@ -44,7 +44,7 @@ public class LoginFrame extends JFrame {
 		private addLabel() {
 			idLabel = new JLabel("아이디 : ");
 			passWordLabel = new JLabel("비밀번호 : ");
-			dbCheckLabel = new JLabel("로그인 여부 체크용 라벨");
+			dbCheckLabel = new JLabel();
 			
 			loginFrame.add(idLabel);
 			idLabel.setBounds(20, 20, 90, 30);

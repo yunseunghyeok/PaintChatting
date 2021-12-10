@@ -22,7 +22,7 @@ implements ServerRecievable
 		this.roomID = roomID;
 		this.userID = new String(userID);
 		this.text = new String(text);
-		this.imageFileName = null;
+		this.imageFileName = "0";
 	}
 	
 	@Override
@@ -31,6 +31,7 @@ implements ServerRecievable
 		dos.writeInt(roomID);
 		dos.writeUTF(userID);
 		dos.writeUTF(text);
+		dos.writeUTF(imageFileName);
 	}
 	
 	public int getRoomID() { return roomID; }

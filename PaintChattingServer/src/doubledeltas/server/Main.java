@@ -48,9 +48,9 @@ public class Main {
 				hm.put(roomid, new HashMap<String, DataOutputStream>());
 				cnt++;
 			}
-			Logger.l(String.format("%d개의 채팅방 로딩 성공!", cnt));
+			Logger.l(String.format("%d개의 채팅방 로딩 성공.", cnt));
 
-			Logger.l("로딩 완료!");
+			Logger.l("서버 오픈 완료.");
 			
 			//////////// server thread 생성 ////////////
 			while (true) {

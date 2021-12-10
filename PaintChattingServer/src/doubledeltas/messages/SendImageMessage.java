@@ -12,6 +12,7 @@ implements Broadcastable, ClientRecievable, ServerRecievable
 	File file;
 	
 	public SendImageMessage(String fileName, File file) {
+		this.type = TransferCode.SEND_IMAGE;
 		this.fileName = new String(fileName);
 		this.file = file;
 	}

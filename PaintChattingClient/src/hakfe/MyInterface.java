@@ -213,6 +213,8 @@ public class MyInterface extends JFrame {
 		Menu.add(menubutton);
 		menubutton.setBounds(5, 25, 90, 30);
 		menubutton.setVisible(true);
+		
+		new ChatUpdateThread().start();
 	}
 
 	public void gbcForm(Component c, int x, int y, int w, int h) {
@@ -377,7 +379,7 @@ public class MyInterface extends JFrame {
 			sendImageButton.setVisible(true);
 			sendImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					ImageIcon Updateicon = null;
+					File file = null;
 					// BufferedImage
 					Rectangle screenRect = new Rectangle(Canvas.getX(), Canvas.getY() + 20, Canvas.getWidth() - 30,
 							Canvas.getHeight());
@@ -388,26 +390,21 @@ public class MyInterface extends JFrame {
 						e1.printStackTrace();
 					}
 					try {
-						ImageIO.write(image, "png", new File("C:/javaPanelToImage/image" + imgCount + ".png"));
-						ImageIcon icon = new ImageIcon("C:/javaPanelToImage/image" + imgCount + ".png");
+						file = new File(String.format("C:/javaPanelToImage/image/image%d.png", imgCount));
 						Image updateImg = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-						Updateicon = new ImageIcon(updateImg);
-
+						BufferedImage bi = new BufferedImage(
+								updateImg.getWidth(null), updateImg.getHeight(null), BufferedImage.TYPE_INT_RGB);
+						Graphics bg = bi.getGraphics();
+						bg.drawImage(updateImg, 0, 0, null);
+						bg.dispose();
+						ImageIO.write(bi, "png", file);
+						
+						String newFileName = String.format("img_%s_%d.png", UserID, imgCount);
+						new SendImageMessage(newFileName, file).send(dos);
+						new ChatMessage(10000000, UserID, "", newFileName).send(dos);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
-
-					JLabel gpLabel = new JLabel(Updateicon);
-					gpLabel.setPreferredSize(new Dimension(100, 100));
-					JLabel st = new JLabel();
-					gbcFormByMe(gpLabel, 0, displayCnt, 1, 1);
-					displayCnt++;
-					st.setPreferredSize(new Dimension(20, 20));
-					gbcFormByMe(st, 0, displayCnt, 1, 1);
-					displayCnt++;
-					scrollPane.updateUI();
-
-					imgCount++;
 				}
 			});
 		}
@@ -501,7 +498,6 @@ public class MyInterface extends JFrame {
 
 	class SendButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			JLabel displayLabel;
 			String target = ChattingSendArea.getText();
 			String temp = "<html>" + target + "</html>";
 			temp = temp.replaceAll("\\n", "<br/>");
@@ -511,14 +507,6 @@ public class MyInterface extends JFrame {
 			Message msg;
 			try {
 				new ChatMessage(10000000, UserID, temp).send(dos);
-				msg = qs.waitForAnyMessage(new byte[] {TransferCode.CHAT_SUC, TransferCode.CHAT_FAIL});
-				if (msg instanceof ChatSucMessage) {
-					displayLabel = new JLabel(temp);
-					displayLabel.setPreferredSize(new Dimension(250, 70));
-					// displayLabel.setFont(new Font());
-					gbcFormByMe(displayLabel, 0, displayCnt, 1, 1);
-					displayCnt++;
-				}
 				ChattingSendArea.setText("");
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -526,6 +514,57 @@ public class MyInterface extends JFrame {
 		}
 	}
 
+	class ChatUpdateThread extends Thread {
+		@Override
+		public void run() {
+			Message msg;
+			ChatSucMessage sucmsg;
+			SendImageMessage imgmsg;
+			JLabel displayLabel;
+			while (true) {
+				msg = qs.waitForAnyMessage(new byte[] {TransferCode.CHAT_SUC, TransferCode.CHAT_FAIL});
+				if (msg instanceof ChatSucMessage) {
+					sucmsg = (ChatSucMessage)msg;
+					displayLabel = new JLabel((sucmsg.getText()));
+					displayLabel.setPreferredSize(new Dimension(250, 70));
+					if (sucmsg.getUserID().equals(UserID))
+						gbcFormByMe(displayLabel, 0, displayCnt, 1, 1);
+					else
+						gbcFormByAnother(displayLabel, 0, displayCnt, 1, 1);
+					displayCnt++;
+					if (sucmsg.getImageFileName() != "0") {
+						imgmsg = (SendImageMessage) qs.waitForMessage(TransferCode.SEND_IMAGE);
+						JLabel gpLabel = new JLabel(new ImageIcon(imgmsg.getFile().getAbsolutePath()));
+						gpLabel.setPreferredSize(new Dimension(100, 100));
+						JLabel st = new JLabel();
+						if (sucmsg.getUserID().equals(UserID))
+							gbcFormByMe(gpLabel, 0, displayCnt, 1, 1);
+						else
+							gbcFormByAnother(gpLabel, 0, displayCnt, 1, 1);
+						displayCnt++;
+						st.setPreferredSize(new Dimension(20, 20));
+						if (sucmsg.getUserID().equals(UserID))
+							gbcFormByMe(st, 0, displayCnt, 1, 1);
+						else
+							gbcFormByAnother(st, 0, displayCnt, 1, 1);
+						displayCnt++;
+						scrollPane.updateUI();
+
+						imgCount++;
+					}
+				}
+			}
+		}
+	}
+	
+	public void gbcFormByAnother(Component c, int x, int y, int w, int h) {
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = w;
+		gbc.gridheight = h;
+		ChattingDisplayByAnother.add(c, gbc);
+	}
+	
 	public void gbcFormByMe(Component c, int x, int y, int w, int h) {
 		gbc.gridx = x;
 		gbc.gridy = y;

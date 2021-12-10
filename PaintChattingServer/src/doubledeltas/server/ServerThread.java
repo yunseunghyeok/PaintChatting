@@ -282,7 +282,7 @@ public class ServerThread extends Thread {
     	ResultSet rs;
     	String text = msg.getText();
     	String font = null;
-    	Logger.l(String.format("클라이언트 [%s]로부터 채팅 요청: %s",
+    	Logger.l(String.format("클라이언트 [%s]로부터 채팅 요청: \"%s\"",
     			socket.getInetAddress().toString(),
     			(text.length() > 80) ? text.substring(0, 80) + " ..." : text));
 		try {
@@ -297,7 +297,6 @@ public class ServerThread extends Thread {
 				return;
 			}
 			font = rs.getString("font");
-			
 			// log chat
 			int row = con.sendUpdateQuery(String.format(
 					"INSERT INTO chat_log VALUES (%d, '%s', %d, '%s', '%s')",
@@ -305,7 +304,7 @@ public class ServerThread extends Thread {
 					msg.getUserID(),
 					msg.getRoomID(),
 					msg.getText(),
-					(msg.getImageFileName() != null) ? msg.getImageFileName() : "0"
+					msg.getImageFileName()
 					));
 			if (row != 1) {
 	        	Logger.l(String.format("%s 채팅 로그 오류", msg.getUserID()));
@@ -320,10 +319,10 @@ public class ServerThread extends Thread {
     	if (!msg.getImageFileName().equals("0")) {
     		File file = new File(Environment.FILE_DIR + "\\" + msg.getImageFileName());
     		try {
-        		new SendImageMessage(msg.getImageFileName(), file).broadcast(hm, msg.getRoomID());
+        		new SendImageMessage("temp.png", file).broadcast(hm, msg.getRoomID());
     		}
     		catch (Exception ex) {
-    	        Logger.l(String.format("%d 파일 전송 실패.", msg.getRoomID()));
+    	        Logger.l(String.format("%d 파일 방송 실패.", msg.getRoomID()));
     		}
     	}
     	try {

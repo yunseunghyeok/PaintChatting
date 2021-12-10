@@ -86,7 +86,7 @@ public class MessageQueues implements Runnable {
 					msg = new RoomSomeoneJoinedMessage(dis.readUTF());
 					break;
 				case TransferCode.CHAT:
-					msg = new ChatMessage(dis.readInt(), dis.readUTF(), dis.readUTF());
+					msg = new ChatMessage(dis.readInt(), dis.readUTF(), dis.readUTF(), dis.readUTF());
 					break;
 				case TransferCode.CHAT_SUC:
 					msg = new ChatSucMessage(dis.readInt(), dis.readUTF(), dis.readUTF(), dis.readUTF(), dis.readUTF());

@@ -31,6 +31,7 @@ implements ServerRecievable
 		dos.writeInt(roomID);
 		dos.writeUTF(userID);
 		dos.writeUTF(text);
+		dos.writeUTF(imageFileName);
 	}
 	
 	public int getRoomID() { return roomID; }

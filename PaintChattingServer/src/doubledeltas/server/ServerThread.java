@@ -322,8 +322,9 @@ public class ServerThread extends Thread {
         		new SendImageMessage("temp.png", file).broadcast(hm, msg.getRoomID());
     		}
     		catch (Exception ex) {
-    	        Logger.l(String.format("%d 파일 방송 실패.", msg.getRoomID()));
+    	        Logger.l(String.format("%d 파일 broadcast 실패.", msg.getRoomID()));
     		}
+    		Logger.l(String.format("%d 파일 broadcast.", msg.getRoomID()));
     	}
     	try {
 			new ChatSucMessage(msg.getRoomID(), msg.getUserID(), msg.getText(), font, msg.getImageFileName())

@@ -525,6 +525,7 @@ public class MyInterface extends JFrame {
 				msg = qs.waitForAnyMessage(new byte[] {TransferCode.CHAT_SUC, TransferCode.CHAT_FAIL});
 				if (msg instanceof ChatSucMessage) {
 					sucmsg = (ChatSucMessage)msg;
+					System.out.println(sucmsg.getText());
 					displayLabel = new JLabel((sucmsg.getText()));
 					displayLabel.setPreferredSize(new Dimension(250, 70));
 					if (sucmsg.getUserID().equals(UserID))
